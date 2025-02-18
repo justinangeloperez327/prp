@@ -24,7 +24,7 @@ return new class extends Migration
             // address
             $table->string('street');
             $table->string('city');
-            $table->enum('state', ['ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA',])->default('VIC');
+            $table->enum('state', ['ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA'])->default('VIC');
             $table->string('postcode');
             $table->string('country')->default('Australia');
 

@@ -2,24 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProductTypeResource\Pages;
-use App\Filament\Resources\ProductTypeResource\RelationManagers;
-use App\Models\ProductType;
-use Filament\Forms;
+use App\Filament\Resources\ProductItemResource\Pages;
+use App\Models\ProductItem;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ProductTypeResource extends Resource
+class ProductItemResource extends Resource
 {
     protected static ?string $navigationGroup = 'Products';
-    protected static ?string $navigationLabel = 'Product Types';
 
-    protected static ?string $model = ProductType::class;
+    protected static ?string $navigationLabel = 'Items';
 
+    public static ?int $navigationSort = 3;
+
+    protected static ?string $model = ProductItem::class;
 
     public static function form(Form $form): Form
     {
@@ -58,9 +56,9 @@ class ProductTypeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProductTypes::route('/'),
-            'create' => Pages\CreateProductType::route('/create'),
-            'edit' => Pages\EditProductType::route('/{record}/edit'),
+            'index' => Pages\ListProductItems::route('/'),
+            'create' => Pages\CreateProductItem::route('/create'),
+            'edit' => Pages\EditProductItem::route('/{record}/edit'),
         ];
     }
 }

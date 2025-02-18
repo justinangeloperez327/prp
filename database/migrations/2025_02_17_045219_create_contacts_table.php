@@ -13,11 +13,19 @@ return new class extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->foreignId('customer_id')->constrained();
+            $table->string('contact_no')->nullable();
+            $table->enum('title', ['Mr', 'Mrs', 'Ms', 'Miss', 'Dr', 'Prof', 'Rev', 'Other'])->nullable();
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('direct_phone')->nullable();
+            $table->string('mobile_phone')->nullable();
             $table->string('email');
-            $table->string('phone');
+            $table->foreignId('customer_id')->constrained();
             $table->enum('status', ['active', 'inactive'])->default('active');
+
+            // Log in Details
+            $table->string('username')->nullable();
+            $table->string('password')->nullable();
             $table->timestamps();
         });
     }

@@ -18,10 +18,16 @@ class ContactFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
+            'contact_no' => $this->faker->numerify('CC#####'),
+            'title' => $this->faker->randomElement(['Mr', 'Mrs', 'Ms', 'Miss', 'Dr']),
+            'first_name' => $this->faker->firstName,
+            'last_name' => $this->faker->lastName,
+            'direct_phone' => $this->faker->phoneNumber,
+            'mobile_phone' => $this->faker->optional()->phoneNumber,
+            'username' => $this->faker->unique()->userName,
+            'password' => bcrypt('password'),
             'customer_id' => Customer::factory(),
             'email' => $this->faker->unique()->safeEmail(),
-            'phone' => $this->faker->phoneNumber(),
             'status' => $this->faker->randomElement(['active', 'inactive']),
         ];
     }

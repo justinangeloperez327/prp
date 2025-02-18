@@ -2,20 +2,20 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\OrderResource\Pages;
-use App\Filament\Resources\OrderResource\RelationManagers;
+use App\Filament\Resources\OnHoldOrderResource\Pages;
 use App\Models\Order;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class OrderResource extends Resource
+class OnHoldOrderResource extends Resource
 {
-    protected static ?string $navigationGroup = 'Order Management';
+    protected static ?string $navigationGroup = 'Orders';
+
+    protected static ?string $navigationLabel = 'On Hold';
+
+    public static ?int $navigationSort = 2;
 
     protected static ?string $model = Order::class;
 
@@ -56,9 +56,9 @@ class OrderResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOrders::route('/'),
-            'create' => Pages\CreateOrder::route('/create'),
-            'edit' => Pages\EditOrder::route('/{record}/edit'),
+            'index' => Pages\ListOnHoldOrders::route('/'),
+            'create' => Pages\CreateOnHoldOrder::route('/create'),
+            'edit' => Pages\EditOnHoldOrder::route('/{record}/edit'),
         ];
     }
 }

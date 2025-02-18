@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('product_categories', function (Blueprint $table) {
             $table->id();
+            $table->string('category_id')->nullable();
             $table->string('name');
             $table->string('order', 3)->default('000');
             $table->enum('status', ['active', 'inactive'])->default('active');

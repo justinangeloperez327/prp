@@ -18,9 +18,9 @@ class CustomerFactory extends Factory
     {
         return [
             'company_name' => $this->faker->company,
-            'phone' => $this->faker->phoneNumber,
+            'phone' => $this->faker->numerify('+61 #### ####'),
             'email' => $this->faker->unique()->safeEmail,
-            'fax' => $this->faker->optional()->phoneNumber,
+            'fax' => $this->faker->optional()->numerify('+61 #### ####'),
             'website' => $this->faker->optional()->url,
             'status' => $this->faker->randomElement(['active', 'inactive']),
             'street' => $this->faker->streetAddress,
