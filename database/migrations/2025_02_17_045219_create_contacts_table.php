@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
             $table->string('contact_no')->nullable();
-            $table->enum('title', ['Mr', 'Mrs', 'Ms', 'Miss', 'Dr', 'Prof', 'Rev', 'Other'])->nullable();
+            $table->enum('title', ['Mr', 'Mrs', 'Ms', 'Miss', 'Dr'])->nullable();
             $table->string('first_name');
             $table->string('last_name');
             $table->string('direct_phone')->nullable();
@@ -26,6 +26,9 @@ return new class extends Migration
             // Log in Details
             $table->string('username')->nullable();
             $table->string('password')->nullable();
+
+            // Notes
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

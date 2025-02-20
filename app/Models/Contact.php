@@ -18,6 +18,7 @@ class Contact extends Model
         'status',
         'username',
         'password',
+        'notes',
     ];
 
     public function customer()

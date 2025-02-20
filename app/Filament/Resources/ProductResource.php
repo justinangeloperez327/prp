@@ -4,9 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
+use App\Models\ProductCategory;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class ProductResource extends Resource
@@ -23,7 +30,48 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Section::make('Product Details')
+                    ->columns([
+                        'md' => 2,
+                        'sm' => 1,
+                    ])
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Product Name')
+                            ->placeholder('Enter a Product Name')
+                            ->required(),
+                        Radio::make('status')
+                            ->label('Active')
+                            ->default('active')
+                            ->options([
+                                'active' => 'Yes',
+                                'inactive' => 'No',
+                            ]),
+                        Select::make('product_category_id')
+                            ->label('Product Category')
+                            ->options(ProductCategory::all()->pluck('name', 'id'))
+                            ->searchable()
+                            ->placeholder('Please select a product category')
+                            ->required(),
+                        Select::make('table_list_style')
+                            ->label('Product Table List Style')
+                            ->default('standard')
+                            ->options([
+                                'standard' => "Standard",
+                                'custom' => 'Custom'
+                            ])->required(),
+                        Textarea::make('type_list')
+                            ->label('Product Type')
+                            ->default('Default')
+                            ->required(),
+                        Textarea::make('colour_list')
+                            ->label('Product Colour Option List')
+                            ->default('Default')
+                            ->required(),
+                        Textarea::make('description')
+                            ->label('Product Description')
+                            ->columnSpan(2)
+                    ]),
             ]);
     }
 
@@ -31,7 +79,19 @@ class ProductResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name')
+                    ->label('Product Name'),
+                TextColumn::make('category.name')
+                    ->label('Category'),
+                TextColumn::make('promotion')
+                    ->label('Promotion'),
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (Product $product): string => match ($product->status) {
+                        'active' => 'success',
+                        'inactive' => 'danger',
+                    })
             ])
             ->filters([
                 //
@@ -40,9 +100,9 @@ class ProductResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 

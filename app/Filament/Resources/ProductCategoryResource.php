@@ -12,6 +12,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class ProductCategoryResource extends Resource
@@ -28,36 +29,29 @@ class ProductCategoryResource extends Resource
     {
         return $form
             ->schema([
-                Tabs::make('Category Details')
-                    ->columnSpanFull()
-                    ->tabs([
-                        Tab::make('Category Details')
-                            ->schema([
-                                Section::make('Category Details')
-                                    ->columns([
-                                        'md' => 2,
-                                        'sm' => 1,
-                                    ])
-                                    ->schema([
-                                        TextInput::make('name')
-                                            ->label('Category Name')
-                                            ->columnSpan(1)
-                                            ->required(),
-                                        Radio::make('status')
-                                            ->label('Status')
-                                            ->columnSpan(1)
-                                            ->default('active')
-                                            ->options([
-                                                'active' => 'Yes',
-                                                'inactive' => 'No',
-                                            ]),
-                                        TextInput::make('order')
-                                            ->label('Sort Order')
-                                            ->columnSpan(1)
-                                            ->required(),
-                                    ]),
-                            ]),
-                    ]),
+                Section::make('Category Details')
+                ->columns([
+                    'md' => 2,
+                    'sm' => 1,
+                ])
+                ->schema([
+                    TextInput::make('name')
+                        ->label('Category Name')
+                        ->columnSpan(1)
+                        ->required(),
+                    Radio::make('status')
+                        ->label('Status')
+                        ->columnSpan(1)
+                        ->default('active')
+                        ->options([
+                            'active' => 'Yes',
+                            'inactive' => 'No',
+                        ]),
+                    TextInput::make('order')
+                        ->label('Sort Order')
+                        ->columnSpan(1)
+                        ->required(),
+                ]),
             ]);
     }
 
@@ -65,18 +59,23 @@ class ProductCategoryResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('name')
+                    ->label('Category Name'),
+                TextColumn::make('order')
+                    ->label('Order'),
+                TextColumn::make('status'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 
@@ -92,6 +91,7 @@ class ProductCategoryResource extends Resource
         return [
             'index' => Pages\ListProductCategories::route('/'),
             'create' => Pages\CreateProductCategory::route('/create'),
+            'view' => Pages\ViewProductCategory::route('/{record}'),
             'edit' => Pages\EditProductCategory::route('/{record}/edit'),
         ];
     }

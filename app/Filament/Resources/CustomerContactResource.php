@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\CustomerContactResource\Pages;
 use App\Models\Contact;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
@@ -15,13 +16,9 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Guava\FilamentNestedResources\Ancestor;
-use Guava\FilamentNestedResources\Concerns\NestedResource;
 
-class ContactResource extends Resource
+class CustomerContactResource extends Resource
 {
-    use NestedResource;
-
     protected static ?string $navigationGroup = 'Customers';
 
     protected static ?string $navigationLabel = 'Contact List';
@@ -65,14 +62,18 @@ class ContactResource extends Resource
                         Select::make('title')
                             ->label('Title')
                             ->options([
-                                'Mr', 'Mrs', 'Ms', 'Miss', 'Dr',
+                                'Mr' => 'Mr',
+                                'Mrs' => 'Mrs',
+                                'Ms' => 'Ms',
+                                'Miss' => 'Miss',
+                                'Dr' => 'Dr',
                             ])
                             ->placeholder('Please Select Title')
                             ->required(),
-                        TextInput::make('firstname')
+                        TextInput::make('first_name')
                             ->placeholder('Enter first name')
                             ->required(),
-                        TextInput::make('lastname')
+                        TextInput::make('last_name')
                             ->placeholder('Enter last name')
                             ->required(),
                         Placeholder::make('')
@@ -82,7 +83,7 @@ class ContactResource extends Resource
                             ->prefixIcon('heroicon-s-phone')
                             ->required(),
                         TextInput::make('mobile_phone')
-                            ->label('Mobile nUmber')
+                            ->label('Mobile Number')
                             ->prefixIcon('heroicon-s-phone')
                             ->required(),
                         TextInput::make('email')
@@ -166,8 +167,8 @@ class ContactResource extends Resource
             ->defaultPaginationPageOption(10)
             ->extremePaginationLinks()
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()->label('View')->icon(null),
+                Tables\Actions\ViewAction::make()->label('Edit')->icon(null),
             ])
             ->bulkActions([
                 // BulkActionGroup::make([
@@ -183,18 +184,12 @@ class ContactResource extends Resource
         ];
     }
 
-    public static function getAncestor(): ?Ancestor
-    {
-        return Ancestor::make(
-            'contacts',
-            'customer'
-        );
-    }
-
     public static function getPages(): array
     {
         return [
-
+            'index' => Pages\ListCustomerContacts::route('/'),
+            'create' => Pages\CreateCustomerContact::route('/record/create'),
+            'edit' => Pages\EditCustomerContact::route('/{record}/edit'),
         ];
     }
 }

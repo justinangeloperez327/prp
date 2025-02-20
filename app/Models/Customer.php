@@ -24,6 +24,7 @@ class Customer extends Model
         'apply_delivery_charge',
         'delivery_charge',
         'charge_trigger',
+        'notes',
     ];
 
     public function contacts()

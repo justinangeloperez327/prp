@@ -7,12 +7,11 @@ use App\Filament\Resources\CustomerResource\Pages;
 use App\Filament\Resources\CustomerResource\RelationManagers\ContactsRelationManager;
 use App\Livewire\ContactList;
 use App\Models\Customer;
-use Filament\Forms\Components\Livewire;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions\Action;
@@ -28,9 +27,13 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Guava\FilamentNestedResources\Ancestor;
+use Guava\FilamentNestedResources\Concerns\NestedResource;
 
 class CustomerResource extends Resource
 {
+    use NestedResource;
+
     protected static ?string $navigationGroup = 'Customers';
 
     protected static ?string $navigationLabel = 'Customer List';
@@ -48,135 +51,111 @@ class CustomerResource extends Resource
     {
         return $form
             ->schema([
-                Tabs::make('customer details')
-                    ->columnSpanFull()
-                    ->tabs([
-                        Tab::make('Customer Details')
-                            ->schema([
-                                Section::make('Customer Details')
-                                    ->columns([
-                                        'md' => 4,
-                                        'sm' => 1,
-                                    ])
-                                    ->schema([
-                                        TextInput::make('company_name')
-                                            ->label('Company Name')
-                                            ->columnSpan(2)
-                                            ->required(),
-                                        TextInput::make('customer_no')
-                                            ->label('Customer No')
-                                            ->columnSpan(1)
-                                            ->required()
-                                            ->placeholder('Auto-generated')
-                                            ->disabledOn('create'),
-                                        Radio::make('status')
-                                            ->label('Status')
-                                            ->columnSpan(1)
-                                            ->default('inactive')
-                                            ->options([
-                                                'active' => 'Yes',
-                                                'inactive' => 'No',
-                                            ]),
-                                        TextInput::make('phone')
-                                            ->label('Phone Number')
-                                            ->prefixIcon('heroicon-s-phone')
-                                            ->columnSpan(2)
-                                            ->required(),
-                                        TextInput::make('email')
-                                            ->label('Email Address')
-                                            ->prefixIcon('heroicon-s-envelope')
-                                            ->columnSpan(2)
-                                            ->required(),
-                                        TextInput::make('fax')
-                                            ->label('Fax Number')
-                                            ->prefixIcon('heroicon-s-printer')
-                                            ->columnSpan(2)
-                                            ->required(),
-                                        TextInput::make('website')
-                                            ->label('Website Address')
-                                            ->prefixIcon('heroicon-s-globe-alt')
-                                            ->columnSpan(2)
-                                            ->required(),
-                                    ]),
-                                Section::make('Address')
-                                    ->columns([
-                                        'md' => 2,
-                                        'sm' => 1,
-                                    ])
-                                    ->schema([
-                                        TextInput::make('street')
-                                            ->label('Street')
-                                            ->columnSpanFull()
-                                            ->required(),
-                                        TextInput::make('city')
-                                            ->label('City')
-                                            ->required(),
-                                        Select::make('state')
-                                            ->label('State')
-                                            ->placeholder('Select a state')
-                                            ->default('VIC')
-                                            ->options([
-                                                'ACT' => 'ACT',
-                                                'NSW' => 'NSW',
-                                                'NT' => 'NT',
-                                                'QLD' => 'QLD',
-                                                'SA' => 'SA',
-                                                'TAS' => 'TAS',
-                                                'VIC' => 'VIC',
-                                                'WA' => 'WA',
-                                            ])
-                                            ->required(),
-                                        TextInput::make('postcode')
-                                            ->label('Postcode')
-                                            ->required(),
-                                    ]),
-                                Section::make('Delivery Details')
-                                    ->columns([
-                                        'md' => 4,
-                                        'sm' => 1,
-                                    ])
-                                    ->schema([
-                                        Select::make('apply_delivery_charge')
-                                            ->label('Apply Delivery Charge')
-                                            ->columnSpan(2)
-                                            ->options([
-                                                'none' => 'None',
-                                                'fixed' => 'Fixed',
-                                                'minimum-order' => 'Minimum Order',
-                                            ])
-                                            ->default('none'),
-                                        TextInput::make('delivery_charge')
-                                            ->label('Delivery Charge')
-                                            ->prefixIcon('heroicon-s-currency-dollar'),
-                                        TextInput::make('charge_trigger')
-                                            ->label('Charge Trigger')
-                                            ->prefixIcon('heroicon-s-currency-dollar'),
-                                    ]),
+                Section::make('Customer Details')
+                    ->columns([
+                        'md' => 4,
+                        'sm' => 1,
+                    ])
+                    ->schema([
+                        TextInput::make('company_name')
+                            ->label('Company Name')
+                            ->columnSpan(2)
+                            ->required(),
+                        TextInput::make('customer_no')
+                            ->label('Customer No')
+                            ->columnSpan(1)
+                            ->placeholder('Auto-generated')
+                            ->disabledOn('create'),
+                        Radio::make('status')
+                            ->label('Status')
+                            ->columnSpan(1)
+                            ->default('inactive')
+                            ->options([
+                                'active' => 'Yes',
+                                'inactive' => 'No',
                             ]),
-                        Tab::make('Contact List')
-                            ->schema([
-                                Section::make('Contact List')
-                                    ->columns([
-                                        'md' => 4,
-                                        'sm' => 1,
-                                    ])
-                                    ->schema([
-                                        Livewire::make(ContactList::class, ['customer' => $form->getRecord()]),
-                                    ]),
-                            ]),
-                        Tab::make('Discount List')
-                            ->schema([
-                                // Add discount list fields here
-                            ]),
-                        Tab::make('Consignment List')
-                            ->schema([
-                                // Add consignment list fields here
-                            ]),
-                        Tab::make('Notes')
-                            ->schema([
-                                // Add notes fields here
-                            ]),
+                        TextInput::make('phone')
+                            ->label('Phone Number')
+                            ->prefixIcon('heroicon-s-phone')
+                            ->columnSpan(2)
+                            ->required(),
+                        TextInput::make('email')
+                            ->label('Email Address')
+                            ->prefixIcon('heroicon-s-envelope')
+                            ->columnSpan(2)
+                            ->required(),
+                        TextInput::make('fax')
+                            ->label('Fax Number')
+                            ->prefixIcon('heroicon-s-printer')
+                            ->columnSpan(2)
+                            ->required(),
+                        TextInput::make('website')
+                            ->label('Website Address')
+                            ->prefixIcon('heroicon-s-globe-alt')
+                            ->columnSpan(2)
+                            ->required(),
                     ]),
+                Section::make('Address')
+                    ->columns([
+                        'md' => 2,
+                        'sm' => 1,
+                    ])
+                    ->schema([
+                        TextInput::make('street')
+                            ->label('Street')
+                            ->columnSpanFull()
+                            ->required(),
+                        TextInput::make('city')
+                            ->label('City')
+                            ->required(),
+                        Select::make('state')
+                            ->label('State')
+                            ->placeholder('Select a state')
+                            ->default('VIC')
+                            ->options([
+                                'ACT' => 'ACT',
+                                'NSW' => 'NSW',
+                                'NT' => 'NT',
+                                'QLD' => 'QLD',
+                                'SA' => 'SA',
+                                'TAS' => 'TAS',
+                                'VIC' => 'VIC',
+                                'WA' => 'WA',
+                            ])
+                            ->required(),
+                        TextInput::make('postcode')
+                            ->label('Postcode')
+                            ->required(),
+                    ]),
+                Section::make('Delivery Details')
+                    ->columns([
+                        'md' => 4,
+                        'sm' => 1,
+                    ])
+                    ->schema([
+                        Select::make('apply_delivery_charge')
+                            ->label('Apply Delivery Charge')
+                            ->columnSpan(2)
+                            ->options([
+                                'none' => 'None',
+                                'fixed' => 'Fixed',
+                                'minimum-order' => 'Minimum Order',
+                            ])
+                            ->default('none'),
+                        TextInput::make('delivery_charge')
+                            ->label('Delivery Charge')
+                            ->prefixIcon('heroicon-s-currency-dollar'),
+                        TextInput::make('charge_trigger')
+                            ->label('Charge Trigger')
+                            ->prefixIcon('heroicon-s-currency-dollar'),
+                    ]),
+                Section::make('Notes')
+                    ->schema([
+                        Textarea::make('notes')
+                            ->label(''),
+
+                    ]),
+
             ]);
     }
 
@@ -236,7 +215,7 @@ class CustomerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            // ContactsRelationManager::class
+            ContactsRelationManager::class,
         ];
     }
 
@@ -247,90 +226,98 @@ class CustomerResource extends Resource
             'create' => Pages\CreateCustomer::route('/create'),
             'edit' => Pages\EditCustomer::route('/{record}/edit'),
             'view' => Pages\ViewCustomer::route('/{record}'),
-            'add-contact' => Pages\CreateContact::route('/{record}/add-contact'),
+            'contacts.list' => Pages\ListCustomerContacts::route('/{record}/contacts'),
+            'contacts.create' => Pages\CreateCustomerContact::route('/{record}/contacts/create'),
+            'contacts.edit' => Pages\EditCustomerContact::route('/{record}/contacts/{contact}/edit'),
+            'details' => Pages\CustomerDetails::route('/{record}/details'),
         ];
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function getAncestor(): ?Ancestor
     {
-        return $infolist
-            ->schema([
-                ComponentTabs::make('customer details')
-                    ->columnSpanFull()
-                    ->tabs([
-                        ComponentTabs\Tab::make('Customer Details')
-                            ->schema([
-                                ComponentsSection::make('Customer Details')
-                                    ->headerActions([
-                                        Action::make('edit')->label('Modify')
-                                            ->icon('heroicon-s-pencil')
-                                            ->url(fn (): string => route('filament.admin.resources.customers.edit', ['record' => $infolist->record])),
-                                    ])
-                                    ->columns([
-                                        'md' => 4,
-                                        'sm' => 1,
-                                    ])
-                                    ->schema([
-                                        TextEntry::make('company_name')
-                                            ->label('Company Name'),
-                                        TextEntry::make('customer_no')
-                                            ->label('Customer No'),
-                                        TextEntry::make('status')
-                                            ->label('Status'),
-                                        TextEntry::make('phone')
-                                            ->label('Phone Number'),
-                                        TextEntry::make('email')
-                                            ->label('Email Address'),
-                                        TextEntry::make('fax')
-                                            ->label('Fax Number'),
-                                        TextEntry::make('website')
-                                            ->label('Website Address'),
-                                    ]),
-                                ComponentsSection::make('Delivery Details')
-                                    ->columns([
-                                        'md' => 4,
-                                        'sm' => 1,
-                                    ])
-                                    ->schema([
-                                        TextEntry::make('apply_delivery_charge')
-                                            ->label('Apply Delivery Charge'),
-                                        TextEntry::make('delivery_charge')
-                                            ->label('Delivery Charge')
-                                            ->prefix('$'),
-                                        TextEntry::make('charge_trigger')
-                                            ->label('Charge Trigger')
-                                            ->prefix('$'),
-                                    ]),
-                            ]),
-
-                        ComponentTabs\Tab::make('Contact List')
-                            ->schema([
-                                ComponentsSection::make('Contact List')
-                                    ->headerActions([
-                                        Action::make('add-contact')->label('Add Contact')
-                                            ->icon('heroicon-s-plus')
-                                            ->url(fn (): string => route('filament.admin.resources.customers.add-contact', ['record' => $infolist->record])),
-                                    ])
-                                    ->schema([
-                                        ComponentLivewire::make(ContactList::class, ['customer' => $infolist->record]),
-                                    ]),
-                            ]),
-                        ComponentTabs\Tab::make('Discount List')
-                            ->schema([
-                                // Add discount list fields here
-                            ]),
-                        ComponentTabs\Tab::make('Consignment List')
-                            ->schema([
-                                // Add consignment list fields here
-                            ]),
-                        ComponentTabs\Tab::make('Notes')
-                            ->schema([
-                                ComponentsSection::make('Customer Notes')
-                                    ->schema([
-
-                                    ]),
-                            ]),
-                    ]),
-            ]);
+        return null;
     }
+
+    // public static function infolist(Infolist $infolist): Infolist
+    // {
+    //     return $infolist
+    //         ->schema([
+    //             ComponentTabs::make('customer details')
+    //                 ->columnSpanFull()
+    //                 ->tabs([
+    //                     ComponentTabs\Tab::make('Customer Details')
+    //                         ->schema([
+    //                             ComponentsSection::make('Customer Details')
+    //                                 ->headerActions([
+    //                                     Action::make('edit')->label('Modify')
+    //                                         ->icon('heroicon-s-pencil')
+    //                                         ->url(fn (): string => route('filament.admin.resources.customers.edit', ['record' => $infolist->record])),
+    //                                 ])
+    //                                 ->columns([
+    //                                     'md' => 4,
+    //                                     'sm' => 1,
+    //                                 ])
+    //                                 ->schema([
+    //                                     TextEntry::make('company_name')
+    //                                         ->label('Company Name'),
+    //                                     TextEntry::make('customer_no')
+    //                                         ->label('Customer No'),
+    //                                     TextEntry::make('status')
+    //                                         ->label('Status'),
+    //                                     TextEntry::make('phone')
+    //                                         ->label('Phone Number'),
+    //                                     TextEntry::make('email')
+    //                                         ->label('Email Address'),
+    //                                     TextEntry::make('fax')
+    //                                         ->label('Fax Number'),
+    //                                     TextEntry::make('website')
+    //                                         ->label('Website Address'),
+    //                                 ]),
+    //                             ComponentsSection::make('Delivery Details')
+    //                                 ->columns([
+    //                                     'md' => 4,
+    //                                     'sm' => 1,
+    //                                 ])
+    //                                 ->schema([
+    //                                     TextEntry::make('apply_delivery_charge')
+    //                                         ->label('Apply Delivery Charge'),
+    //                                     TextEntry::make('delivery_charge')
+    //                                         ->label('Delivery Charge')
+    //                                         ->prefix('$'),
+    //                                     TextEntry::make('charge_trigger')
+    //                                         ->label('Charge Trigger')
+    //                                         ->prefix('$'),
+    //                                 ]),
+    //                         ]),
+
+    //                     ComponentTabs\Tab::make('Contact List')
+    //                         ->schema([
+    //                             ComponentsSection::make('Contact List')
+    //                                 ->headerActions([
+    //                                     Action::make('contacts.create')->label('Add Contact')
+    //                                         ->icon('heroicon-s-plus')
+    //                                         ->url(fn (): string => route('filament.admin.resources.customers.contacts.create', ['record' => $infolist->record])),
+    //                                 ])
+    //                                 ->schema([
+    //                                     ComponentLivewire::make(ContactList::class, ['customer' => $infolist->record]),
+    //                                 ]),
+    //                         ]),
+    //                     ComponentTabs\Tab::make('Discount List')
+    //                         ->schema([
+    //                             // Add discount list fields here
+    //                         ]),
+    //                     ComponentTabs\Tab::make('Consignment List')
+    //                         ->schema([
+    //                             // Add consignment list fields here
+    //                         ]),
+    //                     ComponentTabs\Tab::make('Notes')
+    //                         ->schema([
+    //                             ComponentsSection::make('Customer Notes')
+    //                                 ->schema([
+
+    //                                 ]),
+    //                         ]),
+    //                 ]),
+    //         ]);
+    // }
 }
