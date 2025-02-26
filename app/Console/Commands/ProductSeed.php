@@ -29,7 +29,12 @@ class ProductSeed extends Command
     public function handle()
     {
         // xlsx file to upload data
-        $file = storage_path('app/product.xlsx');
+        $file = database_path('product.xlsx');
+
+        if (!file_exists($file)) {
+            $this->error("File [{$file}] does not exist and can therefore not be imported.");
+            return;
+        }
 
         // import ProductCategories
         Excel::import(new ProductImport, $file);

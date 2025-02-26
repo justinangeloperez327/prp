@@ -28,6 +28,13 @@ class AdminSeed extends Command
      */
     public function handle()
     {
+        $admin = User::where('name', 'admin')->first();
+
+        if ($admin) {
+            $this->info('Admin user already exists.');
+            return;
+        }
+        
         User::create([
             'name' => 'admin',
             'email' => 'admin@gmail.com',
