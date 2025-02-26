@@ -11,6 +11,7 @@ class ProductItem extends Model
     use HasFactory;
 
     protected $fillable = [
+        'product_item_uid',
         'size',
         'unit',
         'quantity',

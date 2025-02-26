@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('product_id')->nullable();
+            $table->string('product_uid')->nullable();
             $table->string('name');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
 
-            $table->string('type_list')->default('default');
-            $table->string('colour_list')->default('default');
+            $table->text('type_list')->nullable();
+            $table->text('colour_list')->nullable();
 
             $table->enum('status', ['active', 'inactive'])->default('active');
 
