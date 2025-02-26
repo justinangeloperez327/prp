@@ -73,6 +73,9 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Products')
                     ->icon('heroicon-o-shopping-bag')
                     ->collapsible('false'),
+            ])
+            ->plugins([
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
             ]);
     }
 }
