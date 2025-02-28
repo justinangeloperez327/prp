@@ -11,7 +11,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->registerCommands();
     }
 
     /**
@@ -20,5 +20,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+    }
+
+    /**
+     * Register commands.
+     *
+     * @return void
+     */
+    protected function registerCommands()
+    {
+        $this->commands([
+            \App\Console\Commands\AdminSeed::class,
+            \App\Console\Commands\ProductSeed::class,
+        ]);
     }
 }
