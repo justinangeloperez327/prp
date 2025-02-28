@@ -21,7 +21,7 @@ class ProductSeed extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Seed products from xlsx file';
 
     /**
      * Execute the console command.
