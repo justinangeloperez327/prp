@@ -1,23 +1,25 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Resources\ProductItemResource\Pages;
-use App\Models\Product;
-use App\Models\ProductItem;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Forms;
 use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
+use App\Models\Product;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use App\Models\ProductItem;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\App\Resources\ProductItemResource\Pages;
+use App\Filament\App\Resources\ProductItemResource\RelationManagers;
 
-class ProductItemResource extends Resource implements HasShieldPermissions
+class ProductItemResource extends Resource
 {
     protected static ?string $navigationGroup = 'Products';
 
@@ -165,18 +167,8 @@ class ProductItemResource extends Resource implements HasShieldPermissions
         return [
             'index' => Pages\ListProductItems::route('/'),
             'create' => Pages\CreateProductItem::route('/create'),
+            'view' => Pages\ViewProductItem::route('/{record}'),
             'edit' => Pages\EditProductItem::route('/{record}/edit'),
-        ];
-    }
-
-    public static function getPermissionPrefixes(): array
-    {
-        return [
-            'view',
-            'view_any',
-            'create',
-            'update',
-            'delete',
         ];
     }
 }

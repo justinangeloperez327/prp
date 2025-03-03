@@ -1,45 +1,33 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Enums\Status;
-use App\Filament\Resources\CustomerResource\Pages;
-use App\Filament\Resources\CustomerResource\RelationManagers\ContactsRelationManager;
-use App\Livewire\ContactList;
-use App\Models\Customer;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Livewire as ComponentLivewire;
-use Filament\Infolists\Components\Section as ComponentsSection;
-use Filament\Infolists\Components\Tabs as ComponentTabs;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Resource;
+use Filament\Forms;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
+use App\Enums\Status;
+use App\Models\Customer;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Guava\FilamentNestedResources\Ancestor;
-use Guava\FilamentNestedResources\Concerns\NestedResource;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\App\Resources\CustomerResource\Pages;
+use App\Filament\App\Resources\CustomerResource\RelationManagers;
 
-class CustomerResource extends Resource implements HasShieldPermissions
+class CustomerResource extends Resource
 {
-    use NestedResource;
+    protected static ?string $model = Customer::class;
 
     protected static ?string $navigationGroup = 'Customers';
 
     protected static ?string $navigationLabel = 'Customer List';
-
-    protected static ?string $model = Customer::class;
 
     public static ?int $navigationSort = 1;
 
@@ -216,7 +204,7 @@ class CustomerResource extends Resource implements HasShieldPermissions
     public static function getRelations(): array
     {
         return [
-            ContactsRelationManager::class,
+            //
         ];
     }
 
@@ -225,111 +213,8 @@ class CustomerResource extends Resource implements HasShieldPermissions
         return [
             'index' => Pages\ListCustomers::route('/'),
             'create' => Pages\CreateCustomer::route('/create'),
-            'edit' => Pages\EditCustomer::route('/{record}/edit'),
             'view' => Pages\ViewCustomer::route('/{record}'),
-            'contacts.list' => Pages\ListCustomerContacts::route('/{record}/contacts'),
-            'contacts.create' => Pages\CreateCustomerContact::route('/{record}/contacts/create'),
-            'contacts.edit' => Pages\EditCustomerContact::route('/{record}/contacts/{contact}/edit'),
-            'details' => Pages\CustomerDetails::route('/{record}/details'),
-        ];
-    }
-
-    public static function getAncestor(): ?Ancestor
-    {
-        return null;
-    }
-
-    // public static function infolist(Infolist $infolist): Infolist
-    // {
-    //     return $infolist
-    //         ->schema([
-    //             ComponentTabs::make('customer details')
-    //                 ->columnSpanFull()
-    //                 ->tabs([
-    //                     ComponentTabs\Tab::make('Customer Details')
-    //                         ->schema([
-    //                             ComponentsSection::make('Customer Details')
-    //                                 ->headerActions([
-    //                                     Action::make('edit')->label('Modify')
-    //                                         ->icon('heroicon-s-pencil')
-    //                                         ->url(fn (): string => route('filament.admin.resources.customers.edit', ['record' => $infolist->record])),
-    //                                 ])
-    //                                 ->columns([
-    //                                     'md' => 4,
-    //                                     'sm' => 1,
-    //                                 ])
-    //                                 ->schema([
-    //                                     TextEntry::make('company_name')
-    //                                         ->label('Company Name'),
-    //                                     TextEntry::make('customer_no')
-    //                                         ->label('Customer No'),
-    //                                     TextEntry::make('status')
-    //                                         ->label('Status'),
-    //                                     TextEntry::make('phone')
-    //                                         ->label('Phone Number'),
-    //                                     TextEntry::make('email')
-    //                                         ->label('Email Address'),
-    //                                     TextEntry::make('fax')
-    //                                         ->label('Fax Number'),
-    //                                     TextEntry::make('website')
-    //                                         ->label('Website Address'),
-    //                                 ]),
-    //                             ComponentsSection::make('Delivery Details')
-    //                                 ->columns([
-    //                                     'md' => 4,
-    //                                     'sm' => 1,
-    //                                 ])
-    //                                 ->schema([
-    //                                     TextEntry::make('apply_delivery_charge')
-    //                                         ->label('Apply Delivery Charge'),
-    //                                     TextEntry::make('delivery_charge')
-    //                                         ->label('Delivery Charge')
-    //                                         ->prefix('$'),
-    //                                     TextEntry::make('charge_trigger')
-    //                                         ->label('Charge Trigger')
-    //                                         ->prefix('$'),
-    //                                 ]),
-    //                         ]),
-
-    //                     ComponentTabs\Tab::make('Contact List')
-    //                         ->schema([
-    //                             ComponentsSection::make('Contact List')
-    //                                 ->headerActions([
-    //                                     Action::make('contacts.create')->label('Add Contact')
-    //                                         ->icon('heroicon-s-plus')
-    //                                         ->url(fn (): string => route('filament.admin.resources.customers.contacts.create', ['record' => $infolist->record])),
-    //                                 ])
-    //                                 ->schema([
-    //                                     ComponentLivewire::make(ContactList::class, ['customer' => $infolist->record]),
-    //                                 ]),
-    //                         ]),
-    //                     ComponentTabs\Tab::make('Discount List')
-    //                         ->schema([
-    //                             // Add discount list fields here
-    //                         ]),
-    //                     ComponentTabs\Tab::make('Consignment List')
-    //                         ->schema([
-    //                             // Add consignment list fields here
-    //                         ]),
-    //                     ComponentTabs\Tab::make('Notes')
-    //                         ->schema([
-    //                             ComponentsSection::make('Customer Notes')
-    //                                 ->schema([
-
-    //                                 ]),
-    //                         ]),
-    //                 ]),
-    //         ]);
-    // }
-
-    public static function getPermissionPrefixes(): array
-    {
-        return [
-            'view',
-            'view_any',
-            'create',
-            'update',
-            'delete',
+            'edit' => Pages\EditCustomer::route('/{record}/edit'),
         ];
     }
 }

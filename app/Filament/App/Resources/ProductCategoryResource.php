@@ -1,28 +1,27 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\App\Resources;
 
-use App\Filament\Resources\ProductCategoryResource\Pages;
+use Filament\Forms;
+use Filament\Tables;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
 use App\Models\ProductCategory;
+use Filament\Resources\Resource;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\App\Resources\ProductCategoryResource\Pages;
+use App\Filament\App\Resources\ProductCategoryResource\RelationManagers;
 
-class ProductCategoryResource extends Resource implements HasShieldPermissions
+class ProductCategoryResource extends Resource
 {
     protected static ?string $navigationGroup = 'Products';
 
     protected static ?string $navigationLabel = 'Categories';
-
-    public static ?int $navigationSort = 1;
 
     protected static ?string $model = ProductCategory::class;
 
@@ -99,17 +98,6 @@ class ProductCategoryResource extends Resource implements HasShieldPermissions
             'create' => Pages\CreateProductCategory::route('/create'),
             'view' => Pages\ViewProductCategory::route('/{record}'),
             'edit' => Pages\EditProductCategory::route('/{record}/edit'),
-        ];
-    }
-
-    public static function getPermissionPrefixes(): array
-    {
-        return [
-            'view',
-            'view_any',
-            'create',
-            'update',
-            'delete',
         ];
     }
 }

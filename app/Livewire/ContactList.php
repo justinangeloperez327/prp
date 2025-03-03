@@ -24,8 +24,6 @@ class ContactList extends Component implements HasForms, HasTable
         $this->customer = $customer;
     }
 
-    
-
     public function table(Table $table): Table
     {
         return $table
