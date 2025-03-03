@@ -60,6 +60,7 @@ class ProductItemResource extends Resource
                         Select::make('product_id')
                             ->label('Product Type')
                             ->columnSpan(3)
+                            ->searchable()
                             ->options(Product::all()->pluck('name', 'id'))
                             ->required(),
                         TextInput::make('gsm')
