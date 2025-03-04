@@ -5,8 +5,11 @@ namespace App\Filament\App\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Order;
+use App\Models\Product;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Models\ProductItem;
+use App\Models\ProductCategory;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
@@ -61,22 +64,55 @@ class OrderResource extends Resource
                         Repeater::make('items')
                             ->relationship('items')
                             ->schema([
-                                Select::make('productItem.name')
+                                Select::make('product_category_id')
+                                ->options(
+                                    ProductCategory::orderBy('name')->pluck('name', 'id')->toArray()
+
+                                )
+                                ->label('Category')
+                                ->searchable()
+                                ->required()
+                                ->reactive(),
+                                Select::make('product_id')
+                                    ->options(function (callable $get) {
+                                        $productCategoryId = $get('product_category_id');
+                                        if ($productCategoryId) {
+                                            return Product::where('product_category_id', $productCategoryId)->pluck('name', 'id')->toArray();
+                                        }
+                                        return [];
+                                    })
                                     ->label('Product')
-                                    ->required(),
+                                    ->searchable()
+                                    ->required()
+                                    ->reactive(),
+                                Select::make('product_item_id')
+                                    ->options(function (callable $get) {
+                                        $productId = $get('product_id');
+                                        if ($productId) {
+                                            return ProductItem::where('product_id', $productId)->pluck('size', 'id')->toArray();
+                                        }
+                                        return [];
+                                    })
+                                    ->label('Size')
+                                    ->searchable()
+                                    ->required()
+                                    ->disabled(fn (callable $get) => !$get('product_id'))
+                                    ->reactive(),
                                 TextInput::make('Instructions')
                                     ->label('Instructions')
-                                    ->required(),
+                                    ->required()
+                                    ->disabled(fn (callable $get) => !$get('product_item_id')),
                                 TextInput::make('quantity')
                                     ->label('Quantity')
                                     ->numeric()
-                                    ->required(),
+                                    ->required()
+                                    ->disabled(fn (callable $get) => !$get('product_item_id')),
                                 TextInput::make('total')
                                     ->label('Total')
                                     ->numeric()
-                                    ->required(),
+                                    ->disabled(),
                             ])
-                            ->columns(4)
+                            ->columns(6)
                             ->createItemButtonLabel('Add Item'),
                     ]),
                 Section::make('Order Details')
