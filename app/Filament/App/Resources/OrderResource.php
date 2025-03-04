@@ -7,12 +7,13 @@ use Filament\Tables;
 use App\Models\Order;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Filament\Forms\Components\Section;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\App\Resources\OrderResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -36,18 +37,19 @@ class OrderResource extends Resource
                 Section::make('Order Details')
                     ->columns(2)
                     ->schema([
-                        TextInput::make('order_date')
+                        DatePicker::make('order_date')
                             ->label('Order Date')
-                            ->type('date'),
+                            ->format('dd-MM-yyyy')
+                            ->required(),
                         TextInput::make('order_no')
                             ->label('Order No')
                             ->type('string'),
                         TextInput::make('order_time')
                             ->label('Order Time')
                             ->type('time'),
-                        TextInput::make('would_like_it_by')
+                        DatePicker::make('would_like_it_by')
                             ->label('Would Like It By')
-                            ->type('date'),
+                            ->format('dd-MM-yyyy'),
                         TextInput::make('status')
                             ->label('Status')
                             ->type('string')
