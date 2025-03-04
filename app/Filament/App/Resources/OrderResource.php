@@ -7,7 +7,9 @@ use Filament\Tables;
 use App\Models\Order;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Forms\Components\Section;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -31,28 +33,28 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Order Details')
+                Section::make('Order Details')
                     ->columns(2)
                     ->schema([
-                        Forms\Components\TextInput::make('order_date')
+                        TextInput::make('order_date')
                             ->label('Order Date')
                             ->type('date'),
-                        Forms\Components\TextInput::make('order_no')
+                        TextInput::make('order_no')
                             ->label('Order No')
                             ->type('string'),
-                        Forms\Components\TextInput::make('order_time')
+                        TextInput::make('order_time')
                             ->label('Order Time')
                             ->type('time'),
-                        Forms\Components\TextInput::make('would_like_it_by')
+                        TextInput::make('would_like_it_by')
                             ->label('Would Like It By')
                             ->type('date'),
-                        Forms\Components\TextInput::make('status')
+                        TextInput::make('status')
                             ->label('Status')
                             ->type('string')
                             ->default('draft')
                             ->disabledOn('create'),
                     ]),
-                Forms\Components\Section::make('Order Items')
+                Section::make('Order Items')
                     ->schema([
                         Repeater::make('items')
                             ->relationship('items')
@@ -75,7 +77,7 @@ class OrderResource extends Resource
                             ->columns(4)
                             ->createItemButtonLabel('Add Item'),
                     ]),
-                Forms\Components\Section::make('Order Details')
+                Section::make('Order Details')
                     ->columns(2)
                     ->schema([
                         TextInput::make('additional_instructions')
