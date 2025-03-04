@@ -2,9 +2,9 @@
 
 namespace App\Filament\App\Pages;
 
+use Filament\Tables;
 use App\Models\Order;
 use Filament\Pages\Page;
-use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
@@ -29,6 +29,13 @@ class OverdueOrders extends Page implements HasTable, HasForms, HasActions
     protected static string $view = 'filament.app.pages.overdue-orders';
 
     public static string $rounteName = 'overdue-orders';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return Order::query()
+            ->where('status', 'overdue')
+            ->count();
+    }
 
     public static function table(Table $table): Table
     {
@@ -62,8 +69,10 @@ class OverdueOrders extends Page implements HasTable, HasForms, HasActions
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->url(fn (Order $record) => route('filament.app.resources.orders.view', $record)),
+                Tables\Actions\EditAction::make()
+                    ->url(fn (Order $record) => route('filament.app.resources.orders.edit', $record)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

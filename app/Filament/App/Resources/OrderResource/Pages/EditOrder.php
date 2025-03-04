@@ -2,9 +2,10 @@
 
 namespace App\Filament\App\Resources\OrderResource\Pages;
 
-use App\Filament\App\Resources\OrderResource;
 use Filament\Actions;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\EditRecord;
+use App\Filament\App\Resources\OrderResource;
 
 class EditOrder extends EditRecord
 {
@@ -14,7 +15,7 @@ class EditOrder extends EditRecord
     {
         return [
             Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()->requiresConfirmation(),
         ];
     }
 }

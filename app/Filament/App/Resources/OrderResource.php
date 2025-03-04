@@ -3,17 +3,21 @@
 namespace App\Filament\App\Resources;
 
 use Filament\Forms;
+use App\Models\User;
 use Filament\Tables;
 use App\Models\Order;
 use App\Models\Product;
 use Filament\Forms\Form;
+use App\Enums\OrderStatus;
 use Filament\Tables\Table;
 use App\Models\ProductItem;
 use App\Models\ProductCategory;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
@@ -29,9 +33,11 @@ class OrderResource extends Resource
 
     protected static ?string $navigationGroup = 'Orders';
 
+    protected static ?string $navigationLabel = 'Current Orders';
+
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return static::getModel()::where('status', OrderStatus::New)->where('user_id', Auth::id())->count();
     }
 
     public static function form(Form $form): Form
@@ -39,25 +45,39 @@ class OrderResource extends Resource
         return $form
             ->schema([
                 Section::make('Order Details')
-                    ->columns(2)
+                    ->columns(4)
                     ->schema([
                         DatePicker::make('order_date')
                             ->label('Order Date')
-                            ->format('dd-MM-yyyy')
+                            ->displayFormat('d-m-Y')
                             ->required(),
                         TextInput::make('order_no')
                             ->label('Order No')
                             ->type('string'),
                         TimePicker::make('order_time')
-                            ->label('Order Time'),
+                            ->label('Order Time')
+                            ->seconds(false),
                         DatePicker::make('would_like_it_by')
                             ->label('Would Like It By')
-                            ->format('dd-MM-yyyy'),
-                        TextInput::make('status')
+                            ->displayFormat('d-m-Y'),
+                        Select::make('status')
                             ->label('Status')
-                            ->type('string')
+                            ->options([
+                                'draft' => 'Draft',
+                                'new' => 'New',
+                                'on-hold' => 'On Hold',
+                                'overdue' => 'Overdue',
+                                'cancelled' => 'Cancelled',
+                                'processed' => 'Processed',
+                            ])
                             ->default('draft')
                             ->disabledOn('create'),
+                        TextInput::make('purchase_order_no')
+                            ->label('Purchase Order No')
+                            ->required(),
+                        Textarea::make('additional_instructions')
+                                ->columnSpan(2)
+                            ->label('Additional Instructions'),
                     ]),
                 Section::make('Order Items')
                     ->schema([
@@ -65,21 +85,22 @@ class OrderResource extends Resource
                             ->relationship('items')
                             ->schema([
                                 Select::make('product_category_id')
-                                ->options(
-                                    ProductCategory::orderBy('name')->pluck('name', 'id')->toArray()
+                                    ->options(
+                                        ProductCategory::orderBy('name')->pluck('name', 'id')->toArray()
 
-                                )
-                                ->label('Category')
-                                ->searchable()
-                                ->required()
-                                ->reactive()
-                                ->afterStateUpdated(function (callable $set) {
-                                    $set('product_id', null);
-                                    $set('product_item_id', null);
-                                    $set('colour', null);
-                                    $set('instructions', null);
-                                    $set('quantity', null);
-                                }),
+                                    )
+                                    ->label('Category')
+                                    ->placeholder('Select a category')
+                                    ->searchable()
+                                    ->required()
+                                    ->reactive()
+                                    ->afterStateUpdated(function (callable $set) {
+                                        $set('product_id', null);
+                                        $set('product_item_id', null);
+                                        $set('product_colour', null);
+                                        $set('special_instructions', null);
+                                        $set('quantity', null);
+                                    }),
                                 Select::make('product_id')
                                     ->options(function (callable $get) {
                                         $productCategoryId = $get('product_category_id');
@@ -89,13 +110,14 @@ class OrderResource extends Resource
                                         return [];
                                     })
                                     ->label('Product')
+                                    ->placeholder('Select a product')
                                     ->searchable()
                                     ->required()
                                     ->reactive()
                                     ->afterStateUpdated(function (callable $set) {
                                         $set('product_item_id', null);
-                                        $set('colour', null);
-                                        $set('instructions', null);
+                                        $set('product_colour', null);
+                                        $set('special_instructions', null);
                                         $set('quantity', null);
                                     }),
                                 Select::make('product_item_id')
@@ -112,10 +134,10 @@ class OrderResource extends Resource
                                     ->disabled(fn (callable $get) => !$get('product_id'))
                                     ->reactive()
                                     ->afterStateUpdated(function (callable $set) {
-                                        $set('instructions', null);
+                                        $set('special_instructions', null);
                                         $set('quantity', null);
                                     }),
-                                Select::make('colour')
+                                Select::make('product_colour')
                                     ->options(function (callable $get) {
                                         $productId = $get('product_id');
                                         if ($productId) {
@@ -133,35 +155,41 @@ class OrderResource extends Resource
                                     ->disabled(fn (callable $get) => !$get('product_id') || !Product::find($get('product_id'))?->colour_list)
                                     ->reactive()
                                     ->afterStateUpdated(function (callable $set) {
-                                        $set('instructions', null);
+                                        $set('special_instructions', null);
                                         $set('quantity', null);
                                     }),
-                                TextInput::make('Instructions')
+                                Textarea::make('special_instructions')
                                     ->label('Instructions')
-                                    ->required()
                                     ->disabled(fn (callable $get) => !$get('product_item_id')),
                                 TextInput::make('quantity')
-                                    ->label('Quantity')
+                                    ->label('Qty')
                                     ->numeric()
                                     ->required()
-                                    ->disabled(fn (callable $get) => !$get('product_item_id')),
+                                    ->reactive()
+                                    ->minValue(1)
+                                    ->step(1)
+                                    ->disabled(fn (callable $get) => !$get('product_item_id'))
+                                    ->afterStateUpdated(function (callable $set, callable $get) {
+                                        $quantity = $get('quantity');
+                                        $productItemId = $get('product_item_id');
+                                        if ($quantity && $productItemId) {
+                                            $pricePerQuantity = ProductItem::find($productItemId)->price_per_quantity ?? 0;
+                                            $total = ($quantity * $pricePerQuantity) / 1000;
+                                            $set('total', $total);
+                                        } else {
+                                            $set('total', null);
+                                        }
+                                    }),
                                 TextInput::make('total')
-                                    ->label('Total')
+                                    ->label('Total (ex. GST)')
                                     ->numeric()
-                                    ->disabled(),
+                                    ->prefix('$')
+                                    ->required()
+                                    ->readOnly(),
                             ])
                             ->columns(7)
-                            ->createItemButtonLabel('Add Item'),
-                    ]),
-                Section::make('Order Details')
-                    ->columns(2)
-                    ->schema([
-                        TextInput::make('additional_instructions')
-                            ->label('Additional Instructions')
-                            ->required(),
-                        TextInput::make('purchase_order_no')
-                            ->label('Purchase Order No')
-                            ->required(),
+                            ->createItemButtonLabel('Add Item')
+
                     ]),
             ]);
     }

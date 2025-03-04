@@ -29,6 +29,13 @@ class NewOrders extends Page implements HasTable, HasForms, HasActions
 
     protected static string $view = 'filament.app.pages.new-orders';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return Order::query()
+            ->where('status', 'new')
+            ->count();
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -61,8 +68,10 @@ class NewOrders extends Page implements HasTable, HasForms, HasActions
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->url(fn (Order $record) => route('filament.app.resources.orders.view', $record)),
+                Tables\Actions\EditAction::make()
+                    ->url(fn (Order $record) => route('filament.app.resources.orders.edit', $record)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
