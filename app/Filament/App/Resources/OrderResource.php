@@ -7,7 +7,7 @@ use Filament\Tables;
 use App\Models\Order;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Forms\Components\Section;
+use Filament\Forms\Components\Section;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
