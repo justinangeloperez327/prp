@@ -14,6 +14,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TimePicker;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\App\Resources\OrderResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -44,9 +45,8 @@ class OrderResource extends Resource
                         TextInput::make('order_no')
                             ->label('Order No')
                             ->type('string'),
-                        TextInput::make('order_time')
-                            ->label('Order Time')
-                            ->type('time'),
+                        TimePicker::make('order_time')
+                            ->label('Order Time'),
                         DatePicker::make('would_like_it_by')
                             ->label('Would Like It By')
                             ->format('dd-MM-yyyy'),
