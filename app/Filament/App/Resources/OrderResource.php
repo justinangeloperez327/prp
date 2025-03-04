@@ -72,7 +72,14 @@ class OrderResource extends Resource
                                 ->label('Category')
                                 ->searchable()
                                 ->required()
-                                ->reactive(),
+                                ->reactive()
+                                ->afterStateUpdated(function (callable $set) {
+                                    $set('product_id', null);
+                                    $set('product_item_id', null);
+                                    $set('colour', null);
+                                    $set('instructions', null);
+                                    $set('quantity', null);
+                                }),
                                 Select::make('product_id')
                                     ->options(function (callable $get) {
                                         $productCategoryId = $get('product_category_id');
@@ -84,7 +91,13 @@ class OrderResource extends Resource
                                     ->label('Product')
                                     ->searchable()
                                     ->required()
-                                    ->reactive(),
+                                    ->reactive()
+                                    ->afterStateUpdated(function (callable $set) {
+                                        $set('product_item_id', null);
+                                        $set('colour', null);
+                                        $set('instructions', null);
+                                        $set('quantity', null);
+                                    }),
                                 Select::make('product_item_id')
                                     ->options(function (callable $get) {
                                         $productId = $get('product_id');
@@ -97,7 +110,32 @@ class OrderResource extends Resource
                                     ->searchable()
                                     ->required()
                                     ->disabled(fn (callable $get) => !$get('product_id'))
-                                    ->reactive(),
+                                    ->reactive()
+                                    ->afterStateUpdated(function (callable $set) {
+                                        $set('instructions', null);
+                                        $set('quantity', null);
+                                    }),
+                                Select::make('colour')
+                                    ->options(function (callable $get) {
+                                        $productId = $get('product_id');
+                                        if ($productId) {
+                                            $product = Product::find($productId);
+                                            if ($product && $product->colour_list) {
+                                                $colours = explode(';', $product->colour_list);
+                                                return array_combine($colours, $colours);
+                                            }
+                                        }
+                                        return [];
+                                    })
+                                    ->label('Colour')
+                                    ->searchable()
+                                    ->required()
+                                    ->disabled(fn (callable $get) => !$get('product_id') || !Product::find($get('product_id'))?->colour_list)
+                                    ->reactive()
+                                    ->afterStateUpdated(function (callable $set) {
+                                        $set('instructions', null);
+                                        $set('quantity', null);
+                                    }),
                                 TextInput::make('Instructions')
                                     ->label('Instructions')
                                     ->required()
@@ -112,7 +150,7 @@ class OrderResource extends Resource
                                     ->numeric()
                                     ->disabled(),
                             ])
-                            ->columns(6)
+                            ->columns(7)
                             ->createItemButtonLabel('Add Item'),
                     ]),
                 Section::make('Order Details')
