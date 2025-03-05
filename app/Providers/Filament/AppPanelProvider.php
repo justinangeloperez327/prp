@@ -40,9 +40,9 @@ class AppPanelProvider extends PanelProvider
             ->font('Poppins')
             ->font('Inter', provider: GoogleFontProvider::class)
             ->defaultThemeMode(ThemeMode::Dark)
-            ->brandName('Press Ready Print')
+            ->brandName('Press Ready Paper')
             ->brandLogo(asset('images/PRP-logo-Negative-120x40px.svg'))
-            ->brandLogoHeight('3.5rem')
+            ->brandLogoHeight('4rem')
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
             ->pages([
