@@ -14,7 +14,7 @@ class ProductSeed extends Command
      *
      * @var string
      */
-    protected $signature = 'app:product-seed';
+    protected $signature = 'product:seed';
 
     /**
      * The console command description.

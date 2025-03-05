@@ -7,40 +7,42 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-class AdminSeed extends Command
+class SuperAdminSeed extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:admin-seed';
+    protected $signature = 'admin:seed';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create a new admin user';
+    protected $description = 'Create a new super admin user';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $admin = User::where('name', 'admin')->first();
+        $admin = User::where('email', 'admin@gmail.com')->first();
 
         if ($admin) {
-            $this->info('Admin user already exists.');
+            $this->info('Super admin user already exists.');
             return;
         }
-        
-        User::create([
+
+        $admin = User::create([
             'name' => 'admin',
             'email' => 'admin@gmail.com',
             'password' => Hash::make('admin'),
             'remember_token' => Str::random(10),
         ]);
+
+        $admin->assignRole('super_admin');
 
         $this->info('Admin user created successfully.');
     }

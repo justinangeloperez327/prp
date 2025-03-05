@@ -26,14 +26,17 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\App\Resources\OrderResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\OrderResource\RelationManagers;
+use App\Models\Contact;
+use App\Models\Customer;
 
 class OrderResource extends Resource
 {
+
     protected static ?string $model = Order::class;
 
     protected static ?string $navigationGroup = 'Orders';
 
-    protected static ?string $navigationLabel = 'Current Orders';
+    protected static ?string $navigationLabel = 'Orders';
 
     public static function getNavigationBadge(): ?string
     {
@@ -42,6 +45,12 @@ class OrderResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $deliveryCharge = 0;
+        $user = Auth::user();
+        $contact = Contact::where('user_id', $user->id)->first();
+        $customer = Customer::where('id', $contact->customer_id)->first();
+        $deliveryCharge = $customer->delivery_charge;
+
         return $form
             ->schema([
                 Section::make('Order Details')
@@ -49,17 +58,17 @@ class OrderResource extends Resource
                     ->schema([
                         DatePicker::make('order_date')
                             ->label('Order Date')
-                            ->displayFormat('d-m-Y')
-                            ->required(),
-                        TextInput::make('order_no')
-                            ->label('Order No')
-                            ->type('string'),
+                            ->format('Y-m-d')
+                            ->displayFormat('d/m/Y')
+                            ->native(false)
+                            ->default(now()->format('Y-m-d'))
+                            ->disabled(true),
                         TimePicker::make('order_time')
                             ->label('Order Time')
-                            ->seconds(false),
-                        DatePicker::make('would_like_it_by')
-                            ->label('Would Like It By')
-                            ->displayFormat('d-m-Y'),
+                            ->format('H:i')
+                            ->default(now()->format('H:i'))
+                            ->seconds(false)
+                            ->disabled(true),
                         Select::make('status')
                             ->label('Status')
                             ->options([
@@ -72,14 +81,14 @@ class OrderResource extends Resource
                             ])
                             ->default('draft')
                             ->disabledOn('create'),
-                        TextInput::make('purchase_order_no')
-                            ->label('Purchase Order No')
+                        DatePicker::make('would_like_it_by')
+                            ->label('Would Like It By')
+                            ->format('Y-m-d')
+                            ->displayFormat('d/m/Y')
+                            ->native(false)
                             ->required(),
-                        Textarea::make('additional_instructions')
-                                ->columnSpan(2)
-                            ->label('Additional Instructions'),
                     ]),
-                Section::make('Order Items')
+                Section::make('Items')
                     ->schema([
                         Repeater::make('items')
                             ->relationship('items')
@@ -169,28 +178,65 @@ class OrderResource extends Resource
                                     ->minValue(1)
                                     ->step(1)
                                     ->disabled(fn (callable $get) => !$get('product_item_id'))
-                                    ->afterStateUpdated(function (callable $set, callable $get) {
+                                    ->afterStateUpdated(function (callable $set, callable $get) use ($deliveryCharge) {
                                         $quantity = $get('quantity');
                                         $productItemId = $get('product_item_id');
                                         if ($quantity && $productItemId) {
                                             $pricePerQuantity = ProductItem::find($productItemId)->price_per_quantity ?? 0;
-                                            $total = ($quantity * $pricePerQuantity) / 1000;
-                                            $set('total', $total);
+                                            $totalItems = ($quantity * $pricePerQuantity) / 1000;
+                                            $set('total', $totalItems);
                                         } else {
                                             $set('total', null);
                                         }
                                     }),
                                 TextInput::make('total')
-                                    ->label('Total (ex. GST)')
+                                    ->label('Total')
                                     ->numeric()
                                     ->prefix('$')
                                     ->required()
                                     ->readOnly(),
                             ])
                             ->columns(7)
-                            ->createItemButtonLabel('Add Item')
+                            ->addActionLabel('Add Item')
+
+                            ->afterStateUpdated(function (callable $set, callable $get) use ($deliveryCharge) {
+                                // Get all item totals
+                                $items = $get('items');
+                                $total = 0;
+
+                                foreach ($items as $item) {
+                                    if (isset($item['total'])) {
+                                        $total += $item['total'];  // Add each item's total to the grand total
+                                    }
+                                }
+
+                                // Set the total value for all items, and add the delivery charge
+                                $grandTotal = $total + $deliveryCharge;
+                                $set('total', $grandTotal);  // Update the grand total
+                            }),
 
                     ]),
+                Section::make('Delivery Details')
+                    ->columns(4)
+                    ->schema([
+                        Textarea::make('additional_instructions')
+                            ->label('Additional Instructions'),
+                        TextInput::make('purchase_order_no')
+                            ->label('Purchase Order No')
+                            ->required(),
+                        TextInput::make('delivery_charge')
+                            ->label('Delivery Charge')
+                            ->default($deliveryCharge)
+                            ->numeric()
+                            ->prefix('$')
+                            ->readOnly(),
+                        TextInput::make('total')
+                            ->label('Total (ex. GST)')
+                            ->numeric()
+                            ->prefix('$')
+                            ->reactive()
+                            ->readOnly(),
+                    ])
             ]);
     }
 

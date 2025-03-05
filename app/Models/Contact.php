@@ -7,22 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 class Contact extends Model
 {
     protected $fillable = [
-        'title',
+        'customer_id',
+        'user_id',
         'first_name',
         'last_name',
-        'contact_no',
-        'customer_id',
-        'email',
+        'title',
         'direct_phone',
         'mobile_phone',
-        'status',
-        'username',
-        'password',
         'notes',
+        'status',
     ];
 
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

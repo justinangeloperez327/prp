@@ -16,9 +16,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->registerCommands();
         $this->app->register(AppPanelProvider::class);
-        FilamentAsset::register([
-            Js::make('custom', asset('js/custom.js')),
-        ]);
+        // FilamentAsset::register([
+        //     Js::make('custom', asset('js/custom.js')),
+        // ]);
     }
 
     /**
@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
     protected function registerCommands()
     {
         $this->commands([
-            \App\Console\Commands\AdminSeed::class,
+            \App\Console\Commands\SuperAdminSeed::class,
             \App\Console\Commands\ProductSeed::class,
         ]);
     }

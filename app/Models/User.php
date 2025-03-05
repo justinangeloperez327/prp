@@ -3,7 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -46,4 +50,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function contact(): HasOne
+    {
+        return $this->hasOne(Contact::class);
+    }
+
+    // public function canAccessFilament(): bool
+    // {
+    //     return $this->hasRole('customer'); // Adjust this logic based on your requirements
+    // }
 }

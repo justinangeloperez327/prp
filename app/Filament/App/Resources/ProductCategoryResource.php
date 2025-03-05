@@ -100,4 +100,16 @@ class ProductCategoryResource extends Resource
             'edit' => Pages\EditProductCategory::route('/{record}/edit'),
         ];
     }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
+        ];
+    }
 }

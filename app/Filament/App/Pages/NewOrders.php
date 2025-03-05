@@ -4,6 +4,7 @@ namespace App\Filament\App\Pages;
 
 use Filament\Tables;
 use App\Models\Order;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
 use Filament\Tables\Table;
 use Filament\Forms\Contracts\HasForms;
@@ -18,6 +19,7 @@ class NewOrders extends Page implements HasTable, HasForms, HasActions
 
     use InteractsWithForms;
     use InteractsWithTable;
+    use HasPageShield;
 
     protected static ?string $navigationGroup = 'Orders';
 

@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->string('company_name');
-            $table->string('customer_no')->nullable();
             $table->string('phone');
             $table->string('email');
             $table->string('fax')->nullable();
             $table->string('website')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->text('notes')->nullable();
 
             // address
             $table->string('street');

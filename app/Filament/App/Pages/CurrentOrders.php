@@ -2,19 +2,21 @@
 
 namespace App\Filament\App\Pages;
 
-use Filament\Tables;
+
 use App\Models\Order;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
+use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions;
 
-class OverdueOrders extends Page implements HasTable, HasForms, HasActions
+class CurrentOrders extends Page  implements HasTable, HasForms, HasActions
 {
     use InteractsWithForms;
     use InteractsWithTable;
@@ -22,20 +24,18 @@ class OverdueOrders extends Page implements HasTable, HasForms, HasActions
 
     protected static ?string $navigationGroup = 'Orders';
 
-    protected static ?string $navigationLabel = 'Overdue Orders';
+    protected static ?string $navigationLabel = 'Current Orders';
 
-    public static ?int $navigationSort = 3;
+    public static ?int $navigationSort = 1;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = 'filament.app.pages.overdue-orders';
-
-    public static string $rounteName = 'overdue-orders';
+    protected static string $view = 'filament.app.pages.current-orders';
 
     public static function getNavigationBadge(): ?string
     {
         return Order::query()
-            ->where('status', 'overdue')
+            ->where('status', 'new')
             ->count();
     }
 
@@ -44,7 +44,7 @@ class OverdueOrders extends Page implements HasTable, HasForms, HasActions
         return $table
             ->query(
                 Order::query()
-                    ->where('status', 'overdue')
+                    ->where('status', 'new')
             )
             ->columns([
                 TextColumn::make('order_no')
@@ -81,5 +81,12 @@ class OverdueOrders extends Page implements HasTable, HasForms, HasActions
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\CreateAction::make()->label('New Order')->url(route('filament.app.resources.orders.create')),
+        ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\App\Pages\Login;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -41,8 +43,9 @@ class AppPanelProvider extends PanelProvider
             ->font('Inter', provider: GoogleFontProvider::class)
             ->defaultThemeMode(ThemeMode::Dark)
             ->brandName('Press Ready Paper')
-            ->brandLogo(asset('images/PRP-logo-Negative-120x40px.svg'))
-            ->brandLogoHeight('4rem')
+            ->brandLogoHeight('5rem')
+            ->brandLogo(asset('images/PRP-logo-Positive-120x40px.svg'))
+            ->darkModeBrandLogo(asset('images/PRP-logo-Negative-120x40px.svg'))
             ->discoverResources(in: app_path('Filament/App/Resources'), for: 'App\\Filament\\App\\Resources')
             ->discoverPages(in: app_path('Filament/App/Pages'), for: 'App\\Filament\\App\\Pages')
             ->pages([
@@ -50,8 +53,8 @@ class AppPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/App/Widgets'), for: 'App\\Filament\\App\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\AccountWidget::class,
+                // Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -66,6 +69,24 @@ class AppPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->plugins([
+                FilamentShieldPlugin::make()
+                    ->gridColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 3
+                    ])
+                    ->sectionColumnSpan(1)
+                    ->checkboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                        'lg' => 4,
+                    ])
+                    ->resourceCheckboxListColumns([
+                        'default' => 1,
+                        'sm' => 2,
+                    ]),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([

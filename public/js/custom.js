@@ -6,10 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateLogo() {
         const htmlElement = document.documentElement;
         if (htmlElement.classList.contains("dark")) {
-            console.log("dark");
             logo.src = darkLogo;
         } else {
-            console.log("light");
             logo.src = lightLogo;
         }
     }

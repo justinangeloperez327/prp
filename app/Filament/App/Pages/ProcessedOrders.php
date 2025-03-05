@@ -3,6 +3,7 @@
 namespace App\Filament\App\Pages;
 
 use App\Models\Order;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,6 +18,7 @@ class ProcessedOrders extends Page implements HasTable, HasForms, HasActions
 {
     use InteractsWithForms;
     use InteractsWithTable;
+    use HasPageShield;
 
     protected static ?string $navigationGroup = 'Orders';
 

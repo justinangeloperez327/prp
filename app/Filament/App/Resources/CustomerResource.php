@@ -144,7 +144,6 @@ class CustomerResource extends Resource
                             ->label(''),
 
                     ]),
-
             ]);
     }
 
@@ -215,6 +214,18 @@ class CustomerResource extends Resource
             'create' => Pages\CreateCustomer::route('/create'),
             'view' => Pages\ViewCustomer::route('/{record}'),
             'edit' => Pages\EditCustomer::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
         ];
     }
 }

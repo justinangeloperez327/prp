@@ -18,11 +18,11 @@ class Order extends Model
         'order_date',
         'order_time',
         'would_like_it_by',
-        // 'due_date',
+        'status',
         'status',
         'additional_instructions',
         'delivery_charge',
-        'total',
+        'grand_total',
         'purchase_order_no',
     ];
 
