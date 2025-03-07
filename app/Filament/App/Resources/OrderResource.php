@@ -87,11 +87,10 @@ class OrderResource extends Resource
                                     $set('apply_delivery_charge', $customer->apply_delivery_charge);
                                 }
                             })
+
                             ->reactive(),
-                    ])
-                    ->disabled(function () {
-                        return Auth::user()->hasRole('customer');
-                    }),
+                    ])->hidden(fn () => Auth::user()->hasRole('customer')),
+
                 Section::make('Order Details')
                     ->columns(4)
                     ->schema([
@@ -130,7 +129,6 @@ class OrderResource extends Resource
                             ->columnSpanFull()
                             ->relationship('items')
                             ->columns(6)
-                            ->reactive()
                             ->addAction(fn (Action $action) => $action->icon('heroicon-m-plus')->color('primary'))
                             ->addActionLabel('Add Item')
                             ->addActionAlignment('right')
@@ -221,59 +219,26 @@ class OrderResource extends Resource
                                     ->label('Quantity')
                                     ->numeric()
                                     ->required()
-                                    ->reactive()
+                                    ->live()
                                     ->minValue(1)
                                     ->step(1)
                                     ->disabled(fn (Get $get) => ! $get('product_item_id'))
-                                    ->live(debounce: 500)
-                                    ->afterStateUpdated(function (Set $set, Get $get) {
-                                        $quantity = $get('quantity');
-                                        $productItemId = $get('product_item_id');
-                                        if ($quantity && $productItemId) {
-                                            $pricePerQuantity = ProductItem::find($productItemId)->price_per_quantity ?? 0;
-                                            $totalItems = ($quantity * $pricePerQuantity) / 1000;
-                                            $set('total', $totalItems);
-                                        } else {
-                                            $set('total', null);
-                                        }
+                                    ->afterStateUpdated(function (Get $get, Set $set) {
+                                        self::updateTotalPerItem($get, $set);
                                     }),
                                 TextInput::make('total')
                                     ->label('Total')
                                     ->numeric()
                                     ->prefix('$')
                                     ->reactive()
-                                    ->readOnly(),
+                                    ->readOnly()
+                                    ->afterStateHydrated(function (Get $get, Set $set) {
+                                        self::updateTotalPerItem($get, $set);
+                                    }),
                             ])
+                            ->live(onBlur: true)
                             ->afterStateUpdated(function (Set $set, Get $get) {
-                                $items = $get('items');
-                                $grandTotal = 0;
-                                $deliveryCharge = $get('delivery_charge');
-                                $chargeTrigger = $get('charge_trigger');
-                                $applyDeliveryCharge = $get('apply_delivery_charge');
-
-                                foreach ($items as $item) {
-                                    $grandTotal += $item['total'] ?? 0;
-                                }
-
-                                if ($applyDeliveryCharge === 'none') {
-                                    $deliveryCharge = 0;
-                                }
-
-                                if ($applyDeliveryCharge === 'fixed') {
-                                    $grandTotal = $grandTotal + $deliveryCharge;
-                                }
-
-                                if ($applyDeliveryCharge === 'minimum-order') {
-                                    if ($grandTotal >= $chargeTrigger) {
-
-                                        $set('delivery_charge', $deliveryCharge);
-                                        $grandTotal = $grandTotal + $deliveryCharge;
-                                    } else {
-                                        $set('delivery_charge', 0);
-                                    }
-                                }
-                                $grandTotal = round($grandTotal, 2);
-                                $set('grand_total', $grandTotal);
+                                self::updateTotals($get, $set);
                             }),
                         TextInput::make('delivery_charge')
                             ->label('Delivery Charge')
@@ -290,7 +255,10 @@ class OrderResource extends Resource
                             ->numeric()
                             ->prefix('$')
                             ->reactive()
-                            ->readOnly(),
+                            ->readOnly()
+                            ->afterStateHydrated(function (Get $get, Set $set) {
+                                self::updateTotals($get, $set);
+                            }),
                         TextInput::make('purchase_order_no')
                             ->columnSpan(2)
                             ->label('Purchase Order No')
@@ -299,8 +267,7 @@ class OrderResource extends Resource
                             ->columnSpan(2)
                             ->label('Additional Instructions'),
                     ])
-                    ->reactive()
-                    ->hidden(fn (Get $get) => ! $get('customer_id')),
+                    ->reactive(),
 
             ]);
     }
@@ -358,5 +325,48 @@ class OrderResource extends Resource
             'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
+    }
+
+    public static function updateTotalPerItem(Get $get, Set $set): void {
+        $quantity = $get('quantity');
+        $productItemId = $get('product_item_id');
+        if ($quantity && $productItemId) {
+            $pricePerQuantity = ProductItem::find($productItemId)->price_per_quantity ?? 0;
+            $totalItems = ($quantity * $pricePerQuantity) / 1000;
+            $set('total', $totalItems);
+        } else {
+            $set('total', null);
+        }
+    }
+
+    public static function updateTotals(Get $get, Set $set): void
+    {
+        $selectedItems = collect($get('items'))->filter(fn($item) => !empty($item['product_item_id']) && !empty($item['quantity']));
+
+        $grandTotal = $selectedItems->sum(fn($item) => $item['total']);
+
+        $deliveryCharge = $get('delivery_charge');
+        $chargeTrigger = $get('charge_trigger');
+        $applyDeliveryCharge = $get('apply_delivery_charge');
+
+        if ($applyDeliveryCharge === 'none') {
+            $deliveryCharge = 0;
+        }
+
+        if ($applyDeliveryCharge === 'fixed') {
+            $grandTotal = $grandTotal + $deliveryCharge;
+        }
+
+        if ($applyDeliveryCharge === 'minimum-order') {
+            if ($grandTotal >= $chargeTrigger) {
+                $grandTotal = $grandTotal + $deliveryCharge;
+            } else {
+                $deliveryCharge = 0;
+            }
+        }
+
+        $grandTotal = round($grandTotal, 2);
+        $set('grand_total', $grandTotal);
+        $set('delivery_charge', $deliveryCharge);
     }
 }

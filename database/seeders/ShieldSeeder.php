@@ -28,11 +28,11 @@ class ShieldSeeder extends Seeder
         static::makeRolesWithPermissions($rolesWithPermissions);
         static::makeDirectPermissions($directPermissions);
 
-        $customerRolesWithPermissions = '[{"name":"customer","guard_name":"web","permissions":["view_order","view_any_order","create_order","update_order","delete_order","delete_any_order", "page_ProcessedOrders"]}]';
-        $customerDirectPermissions = '[]';
+        // $customerRolesWithPermissions = '[{"name":"customer","guard_name":"web","permissions":["view_order","view_any_order","create_order","update_order","delete_order","delete_any_order", "page_ProcessedOrders"]}]';
+        // $customerDirectPermissions = '[]';
 
-        static::makeRolesWithPermissions($customerRolesWithPermissions);
-        static::makeDirectPermissions($customerDirectPermissions);
+        // static::makeRolesWithPermissions($customerRolesWithPermissions);
+        // static::makeDirectPermissions($customerDirectPermissions);
 
         $this->command->info('Shield Seeding Completed.');
 

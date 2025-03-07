@@ -51,7 +51,7 @@ class CustomerResource extends Resource
                         Radio::make('status')
                             ->label('Status')
                             ->columnSpan(1)
-                            ->default('inactive')
+                            ->default('active')
                             ->options([
                                 'active' => 'Yes',
                                 'inactive' => 'No',

@@ -102,14 +102,16 @@ class ContactsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data) {
+
+                        if (User::where('email', $data['email'])->exists()) {
+                            throw new \Exception('A user with this email already exists.');
+                        }
                         $user = User::create([
                             'name' => $data['first_name'].' '.$data['last_name'],
                             'email' => $data['email'],
                             'password' => Hash::make($data['password']),
                         ]);
-                        $customerRole = Role::firstOrCreate(['name' => 'customer']);
-                        $user->assignRole('customer');
-                        $user->assignRole('panel_user');
+
                         $data['user_id'] = $user->id;
 
                         return $data;
