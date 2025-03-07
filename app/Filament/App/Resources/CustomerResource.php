@@ -144,12 +144,12 @@ class CustomerResource extends Resource
                             ->default('none'),
                         TextInput::make('delivery_charge')
                             ->label('Delivery Charge')
-                            ->type('number')
+                            ->numeric()
                             ->placeholder('0.00')
                             ->prefixIcon('heroicon-s-currency-dollar'),
                         TextInput::make('charge_trigger')
                             ->label('Charge Trigger')
-                            ->type('number')
+                            ->numeric()
                             ->placeholder('0.00')
                             ->prefixIcon('heroicon-s-currency-dollar'),
                     ]),
