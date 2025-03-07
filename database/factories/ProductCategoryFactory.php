@@ -19,7 +19,7 @@ class ProductCategoryFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'status' => $this->faker->randomElement(['active', 'inactive']),
-            'order' => $this->faker->randomElement([1,2,3,4,5,6,7,8,9,10,11,12]),
+            'order' => $this->faker->randomElement([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
         ];
     }
 }

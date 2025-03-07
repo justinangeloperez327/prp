@@ -10,14 +10,11 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class ProductsSheetImport implements ToCollection, WithHeadingRow
 {
-    /**
-    * @param Collection $collection
-    */
     public function collection(Collection $collection)
     {
-        foreach($collection as $row) {
+        foreach ($collection as $row) {
             $category = ProductCategory::where('category_uid', $row['categoryunid'])->first();
-            
+
             if ($category) {
                 Product::firstOrCreate([
                     'product_uid' => $row['productunid'],

@@ -14,7 +14,6 @@ class CustomerSeeder extends Seeder
     {
         Customer::factory()
             ->count(20)
-            ->hasContacts(3)
             ->create();
     }
 }

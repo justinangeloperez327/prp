@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-
 use App\Imports\ProductImport;
 use Illuminate\Console\Command;
 use Maatwebsite\Excel\Facades\Excel;
@@ -31,8 +30,9 @@ class ProductSeed extends Command
         // xlsx file to upload data
         $file = database_path('product.xlsx');
 
-        if (!file_exists($file)) {
+        if (! file_exists($file)) {
             $this->error("File [{$file}] does not exist and can therefore not be imported.");
+
             return;
         }
 

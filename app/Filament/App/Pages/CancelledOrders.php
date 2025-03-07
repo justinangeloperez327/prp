@@ -4,21 +4,21 @@ namespace App\Filament\App\Pages;
 
 use App\Models\Order;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
-use Filament\Pages\Page;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Pages\Page;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 
-class CancelledOrders extends Page  implements HasTable, HasForms, HasActions
+class CancelledOrders extends Page implements HasActions, HasForms, HasTable
 {
+    use HasPageShield;
     use InteractsWithForms;
     use InteractsWithTable;
-    use HasPageShield;
 
     protected static ?string $navigationGroup = 'Orders';
 
@@ -51,7 +51,7 @@ class CancelledOrders extends Page  implements HasTable, HasForms, HasActions
                     ->label('Date In'),
                 TextColumn::make('would_like_it_by')
                     ->label('Required By'),
-                TextColumn::make('user.name')
+                TextColumn::make('customer.company_name')
                     ->label('Customer'),
                 TextColumn::make('status')
                     ->label('Status')

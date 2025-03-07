@@ -3,7 +3,6 @@
 namespace App\Filament\App\Resources;
 
 use App\Filament\App\Resources\ContactResource\Pages;
-use App\Filament\App\Resources\ContactResource\RelationManagers;
 use App\Models\Contact;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
@@ -12,8 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ContactResource extends Resource
 {
@@ -35,8 +32,8 @@ class ContactResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')
-                ->label('Contact Name')
-                ->required(),
+                    ->label('Contact Name')
+                    ->required(),
                 TextInput::make('direct_phone')
                     ->label('Phone Number')
                     ->required(),

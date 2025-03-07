@@ -2,20 +2,16 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
+use App\Filament\App\Resources\ProductCategoryResource\Pages;
 use App\Models\ProductCategory;
-use Filament\Resources\Resource;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\App\Resources\ProductCategoryResource\Pages;
-use App\Filament\App\Resources\ProductCategoryResource\RelationManagers;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class ProductCategoryResource extends Resource
 {
@@ -35,28 +31,28 @@ class ProductCategoryResource extends Resource
         return $form
             ->schema([
                 Section::make('Category Details')
-                ->columns([
-                    'md' => 2,
-                    'sm' => 1,
-                ])
-                ->schema([
-                    TextInput::make('name')
-                        ->label('Category Name')
-                        ->columnSpan(1)
-                        ->required(),
-                    Radio::make('status')
-                        ->label('Status')
-                        ->columnSpan(1)
-                        ->default('active')
-                        ->options([
-                            'active' => 'Yes',
-                            'inactive' => 'No',
-                        ]),
-                    TextInput::make('order')
-                        ->label('Sort Order')
-                        ->columnSpan(1)
-                        ->required(),
-                ]),
+                    ->columns([
+                        'md' => 2,
+                        'sm' => 1,
+                    ])
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Category Name')
+                            ->columnSpan(1)
+                            ->required(),
+                        Radio::make('status')
+                            ->label('Status')
+                            ->columnSpan(1)
+                            ->default('active')
+                            ->options([
+                                'active' => 'Yes',
+                                'inactive' => 'No',
+                            ]),
+                        TextInput::make('order')
+                            ->label('Sort Order')
+                            ->columnSpan(1)
+                            ->required(),
+                    ]),
             ]);
     }
 

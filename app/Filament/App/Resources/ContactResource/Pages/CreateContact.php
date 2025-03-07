@@ -5,7 +5,6 @@ namespace App\Filament\App\Resources\ContactResource\Pages;
 use App\Filament\App\Resources\ContactResource;
 use App\Models\Contact;
 use App\Models\User;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
@@ -18,7 +17,7 @@ class CreateContact extends CreateRecord
     {
         // Create the user first
         $user = User::create([
-            'name' => $data['first_name'] . ' ' . $data['last_name'],
+            'name' => $data['first_name'].' '.$data['last_name'],
             'email' => $data['user']['email'],
             'password' => Hash::make($data['user']['password']),
         ]);

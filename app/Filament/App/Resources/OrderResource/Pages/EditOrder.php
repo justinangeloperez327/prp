@@ -2,10 +2,9 @@
 
 namespace App\Filament\App\Resources\OrderResource\Pages;
 
-use Filament\Actions;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\EditRecord;
 use App\Filament\App\Resources\OrderResource;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
 
 class EditOrder extends EditRecord
 {

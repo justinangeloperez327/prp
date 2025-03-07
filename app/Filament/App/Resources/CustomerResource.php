@@ -2,31 +2,21 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
 use App\Enums\Status;
-use App\Models\Customer;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Actions\Action;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Resource;
-use Filament\Resources\Pages\Page;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Infolists\Components\TextEntry;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\CustomerResource\Pages;
 use App\Filament\App\Resources\CustomerResource\RelationManagers;
-use Filament\Forms\Components\RelationshipRepeater;
-use Filament\Forms\Components\Repeater;
-use Filament\Infolists\Components\Section as ComponentsSection;
+use App\Models\Customer;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 
 class CustomerResource extends Resource
 {
@@ -228,6 +218,6 @@ class CustomerResource extends Resource
             'create' => Pages\CreateCustomer::route('/create'),
             'view' => Pages\ViewCustomer::route('/{record}'),
             'edit' => Pages\EditCustomer::route('/{record}/edit'),
-    ];
+        ];
     }
 }

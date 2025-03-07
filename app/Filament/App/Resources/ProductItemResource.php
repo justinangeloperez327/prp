@@ -2,22 +2,18 @@
 
 namespace App\Filament\App\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Product;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use App\Models\ProductItem;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\ProductItemResource\Pages;
-use App\Filament\App\Resources\ProductItemResource\RelationManagers;
+use App\Models\Product;
+use App\Models\ProductItem;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class ProductItemResource extends Resource
 {
@@ -84,14 +80,14 @@ class ProductItemResource extends Resource
                 Section::make('Product Item Pricing')
                     ->columns([
                         'md' => 4,
-                        'sm' => 1
+                        'sm' => 1,
                     ])
                     ->schema([
                         Select::make('unit')
                             ->label('Item Unit')
                             ->options([
                                 'sheets' => 'Sheets',
-                                'box' => 'Box'
+                                'box' => 'Box',
                             ])
                             ->default('sheets')
                             ->required(),
@@ -104,11 +100,11 @@ class ProductItemResource extends Resource
                         TextInput::make('price_broken_mill_pack')
                             ->label('Broken Pack Price')
                             ->placeholder('Enter broken pack price'),
-                            ]),
+                    ]),
                 Section::make('Promotion Pricing')
                     ->columns([
                         'md' => 4,
-                        'sm' => 1
+                        'sm' => 1,
                     ])
                     ->schema([
                         TextInput::make('promotion_charge')
@@ -118,11 +114,11 @@ class ProductItemResource extends Resource
                             ->label('Customer Discount')
                             ->options([
                                 'does_not_apply' => 'Does not apply',
-                                'applies' => 'Applies'
+                                'applies' => 'Applies',
                             ])
                             ->default('does_not_apply')
                             ->required(),
-                    ])
+                    ]),
             ]);
     }
 
@@ -136,12 +132,12 @@ class ProductItemResource extends Resource
                 // TextColumn::make('size'),
                 TextColumn::make('gsm'),
                 TextColumn::make('status')
-                ->label('Status')
-                ->badge()
-                ->color(fn (ProductItem $productItem): string => match ($productItem->status) {
-                    'active' => 'success',
-                    'inactive' => 'danger',
-                })
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (ProductItem $productItem): string => match ($productItem->status) {
+                        'active' => 'success',
+                        'inactive' => 'danger',
+                    }),
             ])
             ->filters([
                 //

@@ -2,23 +2,19 @@
 
 namespace App\Filament\App\Resources\CustomerResource\RelationManagers;
 
-use Filament\Forms;
-use App\Models\User;
-use Filament\Tables;
-use App\Models\Contact;
 use App\Models\Role;
+use App\Models\User;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Resources\RelationManagers\RelationManager;
 
 class ContactsRelationManager extends RelationManager
 {
@@ -105,9 +101,9 @@ class ContactsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->mutateFormDataUsing(function(array $data) {
+                    ->mutateFormDataUsing(function (array $data) {
                         $user = User::create([
-                            'name' => $data['first_name'] . ' ' . $data['last_name'],
+                            'name' => $data['first_name'].' '.$data['last_name'],
                             'email' => $data['email'],
                             'password' => Hash::make($data['password']),
                         ]);
@@ -115,6 +111,7 @@ class ContactsRelationManager extends RelationManager
                         $user->assignRole('customer');
                         $user->assignRole('panel_user');
                         $data['user_id'] = $user->id;
+
                         return $data;
                     }),
             ])

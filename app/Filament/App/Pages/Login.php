@@ -35,9 +35,10 @@ class Login extends BaseAuth
     protected function getCredentialsFromFormData(array $data): array
     {
         $loginType = filter_var($data['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
         return [
             $loginType => $data['login'],
-            'password'  => $data['password'],
+            'password' => $data['password'],
         ];
     }
 

@@ -22,7 +22,7 @@ class CustomerFactory extends Factory
             'email' => $this->faker->unique()->safeEmail,
             'fax' => $this->faker->numerify('+61 #### ####'),
             'website' => $this->faker->optional()->url,
-            'status' => $this->faker->randomElement(['active', 'inactive']),
+            'status' => 'active',
             'street' => $this->faker->streetAddress,
             'city' => $this->faker->city,
             'state' => $this->faker->randomElement(['ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA']),

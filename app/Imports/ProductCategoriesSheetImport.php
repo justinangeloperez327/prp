@@ -9,12 +9,9 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class ProductCategoriesSheetImport implements ToCollection, WithHeadingRow
 {
-    /**
-    * @param Collection $collection
-    */
     public function collection(Collection $collection)
     {
-        foreach($collection as $row) {
+        foreach ($collection as $row) {
             $productCategory = ProductCategory::firstOrCreate([
                 'category_uid' => $row['categoryunid'],
             ], [
