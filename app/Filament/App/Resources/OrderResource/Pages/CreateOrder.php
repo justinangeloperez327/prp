@@ -11,10 +11,14 @@ class CreateOrder extends CreateRecord
 {
     protected static string $resource = OrderResource::class;
 
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        $data['user_id'] = Auth::id();
+    // protected function mutateFormDataBeforeCreate(array $data): array
+    // {
+    //     $user = Auth::user();
 
-        return $data;
-    }
+    //     if ($user->hasRole('customer')) {
+    //         $data['customer_id'] = $user->contact->customer_id;
+    //     }
+
+    //     return $data;
+    // }
 }

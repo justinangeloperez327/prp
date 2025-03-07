@@ -43,19 +43,68 @@ class OrderResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('status', OrderStatus::New)->where('user_id', Auth::id())->count();
+        return static::getModel()::where('status', OrderStatus::New)
+            ->when(Auth::user()->hasRole('customer'), function (Builder $query) {
+                $contact = Contact::where('user_id', Auth::id())->first();
+                $customer = Customer::where('id', $contact->customer_id)->first();
+                return $query->where('customer_id', $customer->id);
+            })
+            ->count();
     }
 
     public static function form(Form $form): Form
     {
-        $deliveryCharge = 0;
         $user = Auth::user();
-        $contact = Contact::where('user_id', $user->id)->first();
-        $customer = Customer::where('id', $contact->customer_id)->first();
-        $deliveryCharge = $customer->delivery_charge;
+        $deliveryCharge = 0;
+        $grandTotal = 0;
+        if ($user->hasRole('customer')) {
+            $contact = Contact::where('user_id', $user->id)->first();
+            $customer = Customer::where('id', $contact->customer_id)->first();
 
+            if ($customer->apply_delivery_charge == 'fixed') {
+                $deliveryCharge = $customer->delivery_charge;
+                $grandTotal = $deliveryCharge;
+            }
+
+            if ($customer->apply_delivery_charge == 'none') {
+                $deliveryCharge = 0;
+                $grandTotal = 0;
+            }
+
+            $form->fill([
+                'delivery_charge' => $deliveryCharge,
+                'grand_total' => $grandTotal,
+                'customer_id' => $customer->id,
+            ]);
+        }
         return $form
             ->schema([
+                Section::make('Customer Details')
+                    ->columns(4)
+                    ->schema([
+                        Select::make('customer_id')
+                            ->label('Customer')
+                            ->relationship('customer', 'company_name')
+                            ->required()
+                            ->preload()
+                            ->afterStateUpdated(function (Set $set, Get $get) {
+                                $customer = Customer::find($get('customer_id'));
+                                if ($customer) {
+                                    if ($customer->apply_delivery_charge == 'fixed') {
+                                        $set('delivery_charge', $customer->delivery_charge);
+                                        $set('grand_total', $customer->delivery_charge);
+                                    }
+                                    if ($customer->apply_delivery_charge == 'none') {
+                                        $set('delivery_charge', 0);
+                                        $set('grand_total', 0);
+                                    }
+                                }
+                            })
+                            ->reactive(),
+                    ])
+                    ->disabled(function() {
+                        return Auth::user()->hasRole('customer');
+                    }),
                 Section::make('Order Details')
                     ->columns(4)
                     ->schema([
@@ -65,13 +114,13 @@ class OrderResource extends Resource
                             ->displayFormat('d/m/Y')
                             ->native(false)
                             ->default(now()->format('Y-m-d'))
-                            ->disabled(true),
+                            ->readOnly(),
                         TimePicker::make('order_time')
                             ->label('Order Time')
                             ->format('H:i')
                             ->default(now()->format('H:i'))
                             ->seconds(false)
-                            ->disabled(true),
+                            ->readOnly(),
                         Select::make('status')
                             ->label('Status')
                             ->options([
@@ -90,13 +139,13 @@ class OrderResource extends Resource
                             ->displayFormat('d/m/Y')
                             ->native(false)
                             ->required(),
-
                             Repeater::make('items')
                                 ->columnSpanFull()
                                 ->relationship('items')
                                 ->columns(6)
-                                ->addAction(fn (Action $action) => $action->icon('heroicon-m-plus'))
-                                ->addActionLabel(false)
+                                ->reactive()
+                                ->addAction(fn (Action $action) => $action->icon('heroicon-m-plus')->color('primary'))
+                                ->addActionLabel('Add Item')
                                 ->addActionAlignment('right')
                                 ->reorderable()
                                 ->schema([
@@ -178,13 +227,14 @@ class OrderResource extends Resource
                                     //     ->label('Instructions')
                                     //     ->disabled(fn (Get $get) => !$get('product_item_id')),
                                     TextInput::make('quantity')
-                                        ->label('Qty')
+                                        ->label('Quantity')
                                         ->numeric()
                                         ->required()
                                         ->reactive()
                                         ->minValue(1)
                                         ->step(1)
                                         ->disabled(fn (Get $get) => !$get('product_item_id'))
+                                        ->live(debounce: 500)
                                         ->afterStateUpdated(function (Set $set, Get $get) {
                                             $quantity = $get('quantity');
                                             $productItemId = $get('product_item_id');
@@ -192,7 +242,6 @@ class OrderResource extends Resource
                                                 $pricePerQuantity = ProductItem::find($productItemId)->price_per_quantity ?? 0;
                                                 $totalItems = ($quantity * $pricePerQuantity) / 1000;
                                                 $set('total', $totalItems);
-
                                             } else {
                                                 $set('total', null);
                                             }
@@ -201,31 +250,28 @@ class OrderResource extends Resource
                                         ->label('Total')
                                         ->numeric()
                                         ->prefix('$')
-                                        ->required()
+                                        ->reactive()
                                         ->readOnly(),
                                 ])
-                            ->afterStateUpdated(function (Set $set, Get $get) {
-                                    $set('grand_total', $get('delivery_charge'));
+                                ->afterStateUpdated(function (Set $set, Get $get) {
                                     $items = $get('items');
                                     $grandTotal = 0;
                                     foreach ($items as $item) {
-                                        $grandTotal += $item['total'];
+                                        $grandTotal += $item['total'] ?? 0;
                                     }
 
-                                    $grandTotal = $get('grand_total');
-                                    $set('grand_total', $grandTotal);
-                            }),
+                                    $set('grand_total', $grandTotal + $get('delivery_charge'));
+                                }),
                             TextInput::make('delivery_charge')
                                 ->label('Delivery Charge')
                                 ->columnSpan(2)
-                                ->default($deliveryCharge)
                                 ->numeric()
+                                ->reactive()
                                 ->prefix('$')
                                 ->readOnly(),
                             TextInput::make('grand_total')
                                 ->label('Total (ex. GST)')
                                 ->columnSpan(2)
-                                ->default($deliveryCharge)
                                 ->numeric()
                                 ->prefix('$')
                                 ->reactive()
@@ -237,7 +283,9 @@ class OrderResource extends Resource
                             Textarea::make('additional_instructions')
                                 ->columnSpan(2)
                                 ->label('Additional Instructions'),
-                    ]),
+                    ])
+                    ->reactive()
+                    ->hidden(fn(Get $get) => !$get('customer_id')),
 
             ]);
     }

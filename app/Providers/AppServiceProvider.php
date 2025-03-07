@@ -37,7 +37,6 @@ class AppServiceProvider extends ServiceProvider
     protected function registerCommands()
     {
         $this->commands([
-            \App\Console\Commands\SuperAdminSeed::class,
             \App\Console\Commands\ProductSeed::class,
         ]);
     }

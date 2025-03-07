@@ -6,6 +6,7 @@ use Filament\Forms;
 use App\Models\User;
 use Filament\Tables;
 use App\Models\Contact;
+use App\Models\Role;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
@@ -110,6 +111,9 @@ class ContactsRelationManager extends RelationManager
                             'email' => $data['email'],
                             'password' => Hash::make($data['password']),
                         ]);
+                        $customerRole = Role::firstOrCreate(['name' => 'customer']);
+                        $user->assignRole('customer');
+                        $user->assignRole('panel_user');
                         $data['user_id'] = $user->id;
                         return $data;
                     }),

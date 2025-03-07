@@ -14,7 +14,7 @@ class Order extends Model
 
     protected $fillable = [
         'order_no',
-        'user_id',
+        'customer_id',
         'order_date',
         'order_time',
         'would_like_it_by',
@@ -26,9 +26,9 @@ class Order extends Model
         'purchase_order_no',
     ];
 
-    public function user(): BelongsTo
+    public function customer(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Customer::class);
     }
 
     public function items(): HasMany
