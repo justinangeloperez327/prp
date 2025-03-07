@@ -37,9 +37,9 @@ class UserResource extends Resource
                 Select::make('roles')
                     ->label('Roles')
                     ->relationship('roles', 'name')
-                    ->options(fn (): array => collect(config('permission.models.role')::all())->pluck('name', 'id')->toArray())
-                    ->searchable()
-                    ->required(),
+                    ->multiple()
+                    ->required()
+                    ->preload(),
             ]);
     }
 

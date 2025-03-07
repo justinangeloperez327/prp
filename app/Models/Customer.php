@@ -30,7 +30,7 @@ class Customer extends Model
 
     public function contacts(): HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(Contact::class);
     }
 
     public function user(): BelongsTo

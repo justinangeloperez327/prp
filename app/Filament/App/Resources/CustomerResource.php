@@ -8,7 +8,10 @@ use App\Enums\Status;
 use App\Models\Customer;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Actions\Action;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
@@ -17,9 +20,13 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Infolists\Components\TextEntry;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\App\Resources\CustomerResource\Pages;
 use App\Filament\App\Resources\CustomerResource\RelationManagers;
+use Filament\Forms\Components\RelationshipRepeater;
+use Filament\Forms\Components\Repeater;
+use Filament\Infolists\Components\Section as ComponentsSection;
 
 class CustomerResource extends Resource
 {
@@ -48,13 +55,9 @@ class CustomerResource extends Resource
                     ->schema([
                         TextInput::make('company_name')
                             ->label('Company Name')
+                            ->placeholder('Company Name')
                             ->columnSpan(2)
                             ->required(),
-                        TextInput::make('customer_no')
-                            ->label('Customer No')
-                            ->columnSpan(1)
-                            ->placeholder('Auto-generated')
-                            ->disabledOn('create'),
                         Radio::make('status')
                             ->label('Status')
                             ->columnSpan(1)
@@ -66,6 +69,8 @@ class CustomerResource extends Resource
                         TextInput::make('phone')
                             ->label('Phone Number')
                             ->prefixIcon('heroicon-s-phone')
+                            ->mask('+61 9999 9999')
+                            ->placeholder('+61 9999 9999')
                             ->columnSpan(2)
                             ->required(),
                         TextInput::make('email')
@@ -76,10 +81,13 @@ class CustomerResource extends Resource
                         TextInput::make('fax')
                             ->label('Fax Number')
                             ->prefixIcon('heroicon-s-printer')
+                            ->mask('+61 9999 9999')
+                            ->placeholder('+61 9999 9999')
                             ->columnSpan(2)
                             ->required(),
                         TextInput::make('website')
                             ->label('Website Address')
+                            ->placeholder('https://example.com')
                             ->prefixIcon('heroicon-s-globe-alt')
                             ->columnSpan(2)
                             ->required(),
@@ -92,10 +100,12 @@ class CustomerResource extends Resource
                     ->schema([
                         TextInput::make('street')
                             ->label('Street')
+                            ->placeholder('Street Address')
                             ->columnSpanFull()
                             ->required(),
                         TextInput::make('city')
                             ->label('City')
+                            ->placeholder('City')
                             ->required(),
                         Select::make('state')
                             ->label('State')
@@ -113,6 +123,7 @@ class CustomerResource extends Resource
                             ])
                             ->required(),
                         TextInput::make('postcode')
+                            ->placeholder('Postcode')
                             ->label('Postcode')
                             ->required(),
                     ]),
@@ -133,16 +144,19 @@ class CustomerResource extends Resource
                             ->default('none'),
                         TextInput::make('delivery_charge')
                             ->label('Delivery Charge')
+                            ->type('number')
+                            ->placeholder('0.00')
                             ->prefixIcon('heroicon-s-currency-dollar'),
                         TextInput::make('charge_trigger')
                             ->label('Charge Trigger')
+                            ->type('number')
+                            ->placeholder('0.00')
                             ->prefixIcon('heroicon-s-currency-dollar'),
                     ]),
                 Section::make('Notes')
                     ->schema([
                         Textarea::make('notes')
                             ->label(''),
-
                     ]),
             ]);
     }
@@ -203,7 +217,7 @@ class CustomerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ContactsRelationManager::class,
         ];
     }
 
@@ -214,18 +228,6 @@ class CustomerResource extends Resource
             'create' => Pages\CreateCustomer::route('/create'),
             'view' => Pages\ViewCustomer::route('/{record}'),
             'edit' => Pages\EditCustomer::route('/{record}/edit'),
-        ];
-    }
-
-    public static function getPermissionPrefixes(): array
-    {
-        return [
-            'view',
-            'view_any',
-            'create',
-            'update',
-            'delete',
-            'delete_any',
-        ];
+    ];
     }
 }

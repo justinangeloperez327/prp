@@ -12,10 +12,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, HasPanelShield;
 
     /**
      * The attributes that are mass assignable.
@@ -56,8 +56,9 @@ class User extends Authenticatable
         return $this->hasOne(Contact::class);
     }
 
-    // public function canAccessFilament(): bool
-    // {
-    //     return $this->hasRole('customer'); // Adjust this logic based on your requirements
-    // }
+    public function canAccessFilament(): bool
+    {
+        // Allow access if the user has any of the specified roles
+        return $this->hasAnyRole(['admin', 'super_admin', 'customer']);
+    }
 }

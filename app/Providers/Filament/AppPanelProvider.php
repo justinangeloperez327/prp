@@ -38,6 +38,21 @@ class AppPanelProvider extends PanelProvider
                 'primary' => Color::Blue,
                 'success' => Color::Emerald,
                 'warning' => Color::Orange,
+                'rose' => Color::Rose,
+                'lime' => Color::Lime,
+                'amber' => Color::Amber,
+                'emerald' => Color::Emerald,
+                'indigo' => Color::Indigo,
+                'blue' => Color::Blue,
+                'orange' => Color::Orange,
+                'red' => Color::Red,
+                'yellow' => Color::Yellow,
+                'green' => Color::Green,
+                'slate' => Color::Slate,
+                'pink' => Color::Pink,
+                'cyan' => Color::Cyan,
+                'purple' => Color::Purple,
+                'teal' => Color::Teal,
             ])
             ->font('Poppins')
             ->font('Inter', provider: GoogleFontProvider::class)
