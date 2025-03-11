@@ -12,6 +12,7 @@ use App\Models\ProductCategory;
 use App\Models\ProductItem;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -50,20 +51,7 @@ class OrderResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $user = Auth::user();
         $grandTotal = 0;
-        if ($user->hasRole('customer')) {
-            $contact = Contact::where('user_id', $user->id)->first();
-            $customer = Customer::where('id', $contact->customer_id)->first();
-
-            $form->fill([
-                'delivery_charge' => $customer->delivery_charge,
-                'grand_total' => $grandTotal,
-                'customer_id' => $customer->id,
-                'charge_trigger' => $customer->charge_trigger,
-                'apply_delivery_charge' => $customer->apply_delivery_charge,
-            ]);
-        }
 
         return $form
             ->schema([
@@ -86,9 +74,8 @@ class OrderResource extends Resource
                                     $set('apply_delivery_charge', $customer->apply_delivery_charge);
                                 }
                             })
-
-                            ->reactive(),
-                    ])->hidden($user->hasRole('customer')),
+                            ->live()
+                        ])->hidden(fn () => Auth::user()->hasRole('customer')),
 
                 Section::make('Order Details')
                     ->columns(4)
@@ -147,7 +134,7 @@ class OrderResource extends Resource
                                 ->placeholder('Select a category')
                                 ->searchable()
                                 ->required()
-                                ->reactive()
+                                ->live()
                                 ->afterStateUpdated(function (Set $set) {
                                     $set('product_id', null);
                                     $set('product_item_id', null);
@@ -169,7 +156,7 @@ class OrderResource extends Resource
                                 ->placeholder('Select a product')
                                 ->searchable()
                                 ->required()
-                                ->reactive()
+                                ->live()
                                 ->afterStateUpdated(function (Set $set) {
                                     $set('product_item_id', null);
                                     $set('product_colour', null);
@@ -189,7 +176,7 @@ class OrderResource extends Resource
                                 ->searchable()
                                 ->required()
                                 ->disabled(fn (Get $get) => ! $get('product_id'))
-                                ->reactive()
+                                ->live()
                                 ->afterStateUpdated(function (Set $set) {
                                     $set('special_instructions', null);
                                     $set('quantity', null);
@@ -221,7 +208,7 @@ class OrderResource extends Resource
                                 ->label('Quantity')
                                 ->numeric()
                                 ->required()
-                                ->live()
+                                ->live(debounce: 1000)
                                 ->minValue(1)
                                 ->step(1)
                                 ->disabled(fn (Get $get) => ! $get('product_item_id'))
@@ -232,7 +219,7 @@ class OrderResource extends Resource
                                 ->label('Total')
                                 ->numeric()
                                 ->prefix('$')
-                                ->live()
+                                ->live(debounce:500)
                                 ->readOnly(),
                         ])
                         ->live()
@@ -248,28 +235,28 @@ class OrderResource extends Resource
                         ->label('Delivery Charge')
                         ->columnSpan(2)
                         ->numeric()
-                        ->reactive()
+                        ->live()
                         ->prefix('$')
                         ->readOnly(),
-                    TextInput::make('grand_total')
-                        ->label('Total (ex. GST)')
-                        ->columnSpan(2)
-                        ->inputMode('decimal')
-                        ->step('0.01')
-                        ->numeric()
-                        ->prefix('$')
-                        ->reactive()
-                        ->readOnly()
-                        ->afterStateHydrated(function (Get $get, Set $set) {
-                            self::updateTotals($get, $set);
-                        }),
-                    TextInput::make('purchase_order_no')
-                        ->columnSpan(2)
-                        ->label('Purchase Order No')
-                        ->required(),
-                    Textarea::make('additional_instructions')
-                        ->columnSpan(2)
-                        ->label('Additional Instructions'),
+                        TextInput::make('grand_total')
+                            ->label('Total (ex. GST)')
+                            ->columnSpan(2)
+                            ->inputMode('decimal')
+                            ->step('0.01')
+                            ->numeric()
+                            ->prefix('$')
+                            ->live(debounce:1000)
+                            ->readOnly()
+                            ->afterStateHydrated(function (Get $get, Set $set) {
+                                self::updateTotals($get, $set);
+                            }),
+                        TextInput::make('purchase_order_no')
+                            ->columnSpan(2)
+                            ->label('Purchase Order No')
+                            ->required(),
+                        Textarea::make('additional_instructions')
+                            ->columnSpan(2)
+                            ->label('Additional Instructions'),
                     ])
 
             ]);
@@ -345,6 +332,14 @@ class OrderResource extends Resource
 
     public static function updateTotals(Get $get, Set $set): void
     {
+        if (Auth::user()->hasRole('customer')) {
+            $contact = Contact::where('user_id', Auth::id())->first();
+            $customer = Customer::where('id', $contact->customer_id)->first();
+            $set('delivery_charge', $customer->delivery_charge);
+            $set('charge_trigger', $customer->charge_trigger);
+            $set('apply_delivery_charge', $customer->apply_delivery_charge);
+        }
+
         $selectedItems = collect($get('items'))->filter(fn($item) => !empty($item['product_item_id']) && !empty($item['quantity']));
         $prices = ProductItem::whereIn('id', $selectedItems->pluck('product_item_id'))->pluck('price_per_quantity', 'id');
 
