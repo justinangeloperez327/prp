@@ -107,15 +107,19 @@ class AppPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Orders')
                     ->icon('heroicon-o-rectangle-stack')
-                    ->collapsible('false'),
+                    ->collapsible()->extraSidebarAttributes(['class' => 'featured-sidebar-group'])
+                    ->extraTopbarAttributes(['class' => 'featured-topbar-group']),
                 NavigationGroup::make()
                     ->label('Customers')
                     ->icon('heroicon-o-users')
-                    ->collapsible('false'),
+                    ->collapsible()->extraSidebarAttributes(['class' => 'featured-sidebar-group'])
+                    ->extraTopbarAttributes(['class' => 'featured-topbar-group']),
                 NavigationGroup::make()
                     ->label('Products')
                     ->icon('heroicon-o-shopping-bag')
-                    ->collapsible('false'),
-            ]);
+                    ->collapsible()->extraSidebarAttributes(['class' => 'featured-sidebar-group'])
+                    ->extraTopbarAttributes(['class' => 'featured-topbar-group']),
+            ])
+            ->sidebarFullyCollapsibleOnDesktop();
     }
 }

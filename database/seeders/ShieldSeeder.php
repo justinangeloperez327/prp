@@ -28,14 +28,38 @@ class ShieldSeeder extends Seeder
         static::makeRolesWithPermissions($rolesWithPermissions);
         static::makeDirectPermissions($directPermissions);
 
-        // $customerRolesWithPermissions = '[{"name":"customer","guard_name":"web","permissions":["view_order","view_any_order","create_order","update_order","delete_order","delete_any_order", "page_ProcessedOrders"]}]';
-        // $customerDirectPermissions = '[]';
+        $this->command->info('Super Admin Role Created');
 
-        // static::makeRolesWithPermissions($customerRolesWithPermissions);
-        // static::makeDirectPermissions($customerDirectPermissions);
+        // Create Admin Role
+        $adminRolesWithPermissions = '[{"name":"admin","guard_name":"web","permissions":["view_order","view_any_order","create_order","update_order","delete_order","delete_any_order",
+        "page_ProcessedOrders", "page_OverdueOrders", "page_OnHoldOrders", "page_NewOrders", "page_CancelledOrders", "page_CurrentOrders",
+        "view_product","view_any_product","create_product","update_product","delete_product","delete_any_product",
+        "view_product::category","view_any_product::category","create_product::category","update_product::category","delete_product::category","delete_any_product::category",
+        "view_product::item","view_any_product::item","create_product::item","update_product::item","delete_product::item","delete_any_product::item",
+        "view_contact","view_any_contact","create_contact", "update_contact","delete_contact","delete_any_contact",
+        "view_customer","view_any_customer","create_customer","update_customer","delete_customer","delete_any_customer"]}]';
 
-        $this->command->info('Shield Seeding Completed.');
+        static::makeRolesWithPermissions($adminRolesWithPermissions);
+        $this->command->info('Admin Role Created');
+        //
+        $customerRolesWithPermissions = '[{"name":"customer","guard_name":"web","permissions":["view_order","view_any_order","create_order","update_order","delete_order","delete_any_order", "page_ProcessedOrders"]}]';
+        static::makeRolesWithPermissions($customerRolesWithPermissions);
+        $this->command->info('Customer Role Created');
 
+        //Super
+        $super = User::where('email', 'super@gmail.com')->first();
+
+        $super = User::create([
+            'name' => 'super admin',
+            'email' => 'super@gmail.com',
+            'password' => Hash::make('super'),
+            'remember_token' => Str::random(10),
+        ]);
+
+        $super->assignRole('super_admin');
+        $this->command->info('Super Admin User Created');
+
+        //Admin
         $admin = User::where('email', 'admin@gmail.com')->first();
 
         $admin = User::create([
@@ -45,7 +69,8 @@ class ShieldSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
-        $admin->assignRole('super_admin');
+        $admin->assignRole('admin');
+        $this->command->info('Admin User Created');
     }
 
     protected static function makeRolesWithPermissions(string $rolesWithPermissions): void

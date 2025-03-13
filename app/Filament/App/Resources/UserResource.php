@@ -11,18 +11,26 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Container\Attributes\Auth;
 
 class UserResource extends Resource
 {
-    protected static ?string $navigationGroup = 'User Management';
+    // protected static ?string $navigationGroup = 'User Management';
 
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
+    }
+
+    public static function navigationGroup(?string $group): void
+    {
+        if(Auth::user()->hasRole('super_admin')){
+            static::$navigationGroup = $group;
+        }
     }
 
     public static function form(Form $form): Form

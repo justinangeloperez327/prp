@@ -12,7 +12,6 @@ use App\Models\ProductCategory;
 use App\Models\ProductItem;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -266,7 +265,7 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('order_no')
+                TextColumn::make('purchase_order_no')
                     ->label('Order No'),
                 TextColumn::make('order_time')
                     ->label('Date In'),

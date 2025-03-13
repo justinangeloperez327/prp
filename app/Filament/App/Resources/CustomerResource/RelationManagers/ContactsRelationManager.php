@@ -72,11 +72,11 @@ class ContactsRelationManager extends RelationManager
                         'sm' => 1,
                     ])
                     ->schema([
-                        TextInput::make('email')
+                        TextInput::make('user.email')
                             ->email()
                             ->required()
                             ->maxLength(255),
-                        TextInput::make('password')
+                        TextInput::make('user.password')
                             ->password()
                             ->required()
                             ->maxLength(255),
