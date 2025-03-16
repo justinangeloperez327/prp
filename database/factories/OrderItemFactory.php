@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\ProductItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,14 +19,31 @@ class OrderItemFactory extends Factory
      */
     public function definition(): array
     {
+
+        $productCategory = ProductCategory::inRandomOrder()->first();
+
+        $product = Product::where('product_category_id', $productCategory->id)
+            ->inRandomOrder()
+            ->first();
+
+        $productItem = ProductItem::where('product_id', $product->id)
+            ->inRandomOrder()
+            ->first();
+
+        $colour = $product->colour_list ? $this->faker->randomElement(explode(',', $product->colour_list)) : null;
+        $quantity = $this->faker->numberBetween(1, 10);
+
+        $total = (!empty($productItem->price_per_quantity) ? $productItem->price_per_quantity : 0) * $quantity;
+
         return [
             'order_id' => \App\Models\Order::factory(),
-            'product_item_id' => \App\Models\ProductItem::factory(),
-            'product_colour' => $this->faker->colorName(),
-            'product_size' => $this->faker->randomElement(['small', 'medium', 'large']),
-            'quantity' => $this->faker->numberBetween(1, 10),
-            'total' => $this->faker->randomFloat(2, 0, 1000),
-            'special_instructions' => $this->faker->text(),
+            'product_item_id' => $productItem->id,
+            'product_category_id' => $productCategory->id,
+            'product_id' => $product->id,
+            'product_colour' => $colour,
+            'product_size' => $productItem->size,
+            'quantity' => $quantity,
+            'total' => $total,
         ];
     }
 }

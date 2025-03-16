@@ -17,17 +17,21 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'order_no' => $this->faker->unique()->randomNumber(8),
-            'user_id' => \App\Models\User::factory(),
+            'customer_id' => \App\Models\Customer::factory(),
             'order_date' => $this->faker->date(),
             'order_time' => $this->faker->time(),
             'would_like_it_by' => $this->faker->date(),
             // 'due_date' => $this->faker->date(),
             'status' => $this->faker->randomElement(['draft', 'new', 'processing', 'on-hold', 'cancelled', 'overdue']),
-            'additional_instructions' => $this->faker->text(),
-            'delivery_charge' => $this->faker->randomFloat(2, 0, 100),
-            'total' => $this->faker->randomFloat(2, 0, 1000),
+            'additional_instructions' => $this->faker->optional()->text(),
+            'delivery_charge' => $this->faker->randomFloat(2, 0, 1000),
+            'grand_total' => $this->faker->randomFloat(2, 0, 1000),
             'purchase_order_no' => $this->faker->unique()->randomNumber(8),
         ];
+    }
+
+    public function withItems(int $count = 3): Factory
+    {
+        return $this->has(\App\Models\OrderItem::factory()->count($count), 'items');
     }
 }

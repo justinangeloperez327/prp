@@ -2,9 +2,7 @@
 
 namespace App\Providers;
 
-use App\Providers\Filament\AppPanelProvider;
-use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
+use App\Providers\Filament\AdminPanelProvider;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,10 +13,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerCommands();
-        $this->app->register(AppPanelProvider::class);
-        // FilamentAsset::register([
-        //     Js::make('custom', asset('js/custom.js')),
-        // ]);
+        $this->app->register(AdminPanelProvider::class);
     }
 
     /**

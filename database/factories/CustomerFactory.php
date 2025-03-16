@@ -33,4 +33,19 @@ class CustomerFactory extends Factory
             'charge_trigger' => $this->faker->randomFloat(2, 0, 100),
         ];
     }
+
+    /**
+     * Indicate that the customer has orders.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function hasOrdersWithItems(int $orderCount = 5, int $itemCount = 3): Factory
+    {
+        return $this->has(
+            \App\Models\Order::factory()
+                ->count($orderCount)
+                ->withItems($itemCount),
+            'orders'
+        );
+    }
 }

@@ -2,21 +2,24 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\AuthenticateSession;
-use Filament\Http\Middleware\DisableBladeIconComponents;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
-use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Routing\Middleware\SubstituteBindings;
+use Filament\PanelProvider;
+use Filament\Enums\ThemeMode;
+use Filament\Support\Colors\Color;
+use Filament\Http\Middleware\Authenticate;
+use App\Filament\Admin\Widgets\OrdersChart;
+use Filament\FontProviders\GoogleFontProvider;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Filament\Http\Middleware\AuthenticateSession;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -24,10 +27,38 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->id('admin')
-            ->path('admin')
+            ->path('/p')
+            ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'danger' => Color::Rose,
+                'gray' => Color::Gray,
+                'info' => Color::Indigo,
+                'primary' => Color::Blue,
+                'success' => Color::Emerald,
+                'warning' => Color::Orange,
+                'rose' => Color::Rose,
+                'lime' => Color::Lime,
+                'amber' => Color::Amber,
+                'emerald' => Color::Emerald,
+                'indigo' => Color::Indigo,
+                'blue' => Color::Blue,
+                'orange' => Color::Orange,
+                'red' => Color::Red,
+                'yellow' => Color::Yellow,
+                'green' => Color::Green,
+                'slate' => Color::Slate,
+                'pink' => Color::Pink,
+                'cyan' => Color::Cyan,
+                'purple' => Color::Purple,
+                'teal' => Color::Teal,
             ])
+            ->font('Poppins')
+            ->font('Inter', provider: GoogleFontProvider::class)
+            ->defaultThemeMode(ThemeMode::Light)
+            ->brandName('Press Ready Paper')
+            ->brandLogoHeight('5rem')
+            ->brandLogo(asset('images/PRP-logo-Positive-120x40px.svg'))
+            ->darkModeBrandLogo(asset('images/PRP-logo-Negative-120x40px.svg'))
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->pages([
@@ -35,8 +66,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                OrdersChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -51,6 +81,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->default();
     }
 }
