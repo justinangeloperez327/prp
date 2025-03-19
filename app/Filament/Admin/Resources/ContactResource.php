@@ -18,13 +18,13 @@ use App\Filament\Admin\Resources\ContactResource\RelationManagers;
 
 class ContactResource extends Resource
 {
-    protected static ?string $model = Contact::class;
-
     protected static ?string $navigationGroup = 'Customers';
 
     protected static ?string $navigationLabel = 'Contact List';
 
     public static ?int $navigationSort = 1;
+
+    protected static ?string $model = Contact::class;
 
     public static function getNavigationBadge(): ?string
     {

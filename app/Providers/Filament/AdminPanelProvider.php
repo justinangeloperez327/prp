@@ -10,6 +10,7 @@ use Filament\Enums\ThemeMode;
 use Filament\Support\Colors\Color;
 use Filament\Http\Middleware\Authenticate;
 use App\Filament\Admin\Widgets\OrdersChart;
+use App\Filament\Auth\EditProfile;
 use App\Filament\Auth\Login;
 use Filament\FontProviders\GoogleFontProvider;
 use Illuminate\Session\Middleware\StartSession;
@@ -31,6 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('/p')
             ->login(Login::class)
+            ->profile(EditProfile::class)
             ->colors([
                 'danger' => Color::Rose,
                 'gray' => Color::Gray,
@@ -62,10 +64,15 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('5rem')
             ->brandLogo(asset('images/PRP-logo-Positive-120x40px.svg'))
             ->darkModeBrandLogo(asset('images/PRP-logo-Negative-120x40px.svg'))
+            ->sidebarCollapsibleOnDesktop()
+
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+            ])
+            ->plugins([
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
             ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
             ->widgets([

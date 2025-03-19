@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Admin\Resources\ItemResource\Pages;
+namespace App\Filament\Admin\Resources\UserResource\Pages;
 
-use App\Filament\Admin\Resources\ItemResource;
+use App\Filament\Admin\Resources\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
-class ViewItem extends ViewRecord
+class ViewUser extends ViewRecord
 {
-    protected static string $resource = ItemResource::class;
+    protected static string $resource = UserResource::class;
 
     protected function getHeaderActions(): array
     {

@@ -26,6 +26,8 @@ class ContactsSheetImport implements ToCollection, WithHeadingRow
                     'password' => bcrypt('password'),
                 ]);
 
+                $user->assignRole('customer');
+
                 Contact::firstOrCreate([
                     'contact_code' => $row['contactcode'],
                     'customer_id' => $customer->id,

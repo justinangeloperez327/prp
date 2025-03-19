@@ -50,7 +50,7 @@ class ShieldSeeder extends Seeder
 
         $super = User::create([
             'username' => 'superadmin',
-            'password' => Hash::make('super'),
+            'password' => Hash::make('superadmin'),
         ]);
 
         $super->assignRole('super_admin');
