@@ -22,6 +22,9 @@ return new class extends Migration
             $table->text('additional_instructions')->nullable();
             $table->enum('status', ['draft', 'new', 'processing', 'cancelled', 'overdue', 'on-hold'])->default('draft');
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+
+            $table->json('myob_payload')->nullable();
+
             $table->softDeletes();
             $table->timestamps();
         });

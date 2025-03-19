@@ -2,20 +2,21 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\InvoiceResource\Pages;
-use App\Filament\Admin\Resources\InvoiceResource\RelationManagers;
-use App\Models\Invoice;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\Item;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Admin\Resources\ItemResource\Pages;
+use App\Filament\Admin\Resources\ItemResource\RelationManagers;
 
-class InvoiceResource extends Resource
+class ItemResource extends Resource
 {
-    protected static ?string $model = Invoice::class;
+    protected static ?string $model = Item::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -23,7 +24,7 @@ class InvoiceResource extends Resource
     {
         return $form
             ->schema([
-                //
+
             ]);
     }
 
@@ -31,7 +32,20 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('uid')
+                    ->primary()
+                    ->label('UID')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('name')
+                    ->label('Name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('description')
+                    ->label('Description')
+                    ->searchable()
+                    ->sortable(),
+
             ])
             ->filters([
                 //
@@ -57,10 +71,10 @@ class InvoiceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListInvoices::route('/'),
-            'create' => Pages\CreateInvoice::route('/create'),
-            'view' => Pages\ViewInvoice::route('/{record}'),
-            'edit' => Pages\EditInvoice::route('/{record}/edit'),
+            'index' => Pages\ListItems::route('/'),
+            'create' => Pages\CreateItem::route('/create'),
+            'view' => Pages\ViewItem::route('/{record}'),
+            'edit' => Pages\EditItem::route('/{record}/edit'),
         ];
     }
 }

@@ -47,26 +47,20 @@ class ShieldSeeder extends Seeder
         $this->command->info('Customer Role Created');
 
         //Super
-        $super = User::where('email', 'super@gmail.com')->first();
 
         $super = User::create([
-            'name' => 'super admin',
-            'email' => 'super@gmail.com',
+            'username' => 'superadmin',
             'password' => Hash::make('super'),
-            'remember_token' => Str::random(10),
         ]);
 
         $super->assignRole('super_admin');
         $this->command->info('Super Admin User Created');
 
         //Admin
-        $admin = User::where('email', 'admin@gmail.com')->first();
 
         $admin = User::create([
-            'name' => 'admin',
-            'email' => 'admin@gmail.com',
+            'username' => 'admin',
             'password' => Hash::make('admin'),
-            'remember_token' => Str::random(10),
         ]);
 
         $admin->assignRole('admin');

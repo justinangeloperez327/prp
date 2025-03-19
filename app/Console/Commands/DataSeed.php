@@ -2,25 +2,25 @@
 
 namespace App\Console\Commands;
 
-use App\Imports\ProductImport;
+use App\Imports\DataImport;
 use Illuminate\Console\Command;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ProductSeed extends Command
+class DataSeed extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'product:seed';
+    protected $signature = 'data:seed';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Seed products from xlsx file';
+    protected $description = 'Seeds data from xlsx file';
 
     /**
      * Execute the console command.
@@ -28,7 +28,7 @@ class ProductSeed extends Command
     public function handle()
     {
         // xlsx file to upload data
-        $file = database_path('product.xlsx');
+        $file = database_path('data.xlsx');
 
         if (! file_exists($file)) {
             $this->error("File [{$file}] does not exist and can therefore not be imported.");
@@ -37,7 +37,7 @@ class ProductSeed extends Command
         }
 
         // import ProductCategories
-        Excel::import(new ProductImport, $file);
-        $this->info('Products imported successfully');
+        Excel::import(new DataImport, $file);
+        $this->info('Data imported successfully');
     }
 }

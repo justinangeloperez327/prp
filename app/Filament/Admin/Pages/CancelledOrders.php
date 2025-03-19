@@ -51,7 +51,7 @@ class CancelledOrders extends Page implements HasActions, HasForms, HasTable
                     ->label('Date In'),
                 TextColumn::make('would_like_it_by')
                     ->label('Required By'),
-                TextColumn::make('customer.company_name')
+                TextColumn::make('customer.company')
                     ->label('Customer'),
                 TextColumn::make('status')
                     ->label('Status')

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Console\Commands\DataSeed;
 use App\Providers\Filament\AdminPanelProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
     protected function registerCommands()
     {
         $this->commands([
-            \App\Console\Commands\ProductSeed::class,
+            DataSeed::class,
         ]);
     }
 }

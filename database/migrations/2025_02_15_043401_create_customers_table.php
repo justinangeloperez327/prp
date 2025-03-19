@@ -13,19 +13,23 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->string('company_name');
-            $table->string('phone');
-            $table->string('email');
+            $table->string('customer_code')->unique();
+            $table->string('company');
+
+            $table->string('email')->nullable();
+
+            $table->string('phone')->nullable();
             $table->string('fax')->nullable();
+
             $table->string('website')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->text('notes')->nullable();
 
             // address
-            $table->string('street');
-            $table->string('city');
+            $table->string('street')->nullable();
+            $table->string('city')->nullable();
             $table->enum('state', ['ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA'])->default('VIC');
-            $table->string('postcode');
+            $table->string('postcode')->nullable();
             $table->string('country')->default('Australia');
 
             // delivery details

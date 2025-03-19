@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources;
 
-use Filament\Forms;
 use Filament\Tables;
 use App\Models\Order;
 use App\Models\Contact;
@@ -11,7 +10,6 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use App\Models\Customer;
 use Filament\Forms\Form;
-use App\Enums\OrderStatus;
 use Filament\Tables\Table;
 use App\Models\ProductItem;
 use App\Models\ProductCategory;
@@ -26,10 +24,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TimePicker;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Admin\Resources\OrderResource\Pages;
-use App\Filament\Admin\Resources\OrderResource\RelationManagers;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Grid;
 
 class OrderResource extends Resource
 {
@@ -54,184 +51,187 @@ class OrderResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $grandTotal = 0;
-
         return $form
+
             ->schema([
-                Section::make('Customer Details')
-                    ->columns(4)
-                    ->schema([
-                        Select::make('customer_id')
-                            ->label('Customer')
-                            ->relationship('customer', 'company_name', function (Builder $query) {
-                                return $query->where('status', 'active');
-                            })
-                            ->required()
-                            ->preload()
-                            ->afterStateUpdated(function (Set $set, Get $get) {
-                                $customer = Customer::find($get('customer_id'));
-                                if ($customer) {
-                                    $set('grand_total', 0);
-                                    $set('delivery_charge', $customer->delivery_charge);
-                                    $set('charge_trigger', $customer->charge_trigger);
-                                    $set('apply_delivery_charge', $customer->apply_delivery_charge);
-                                }
-                            })
-                            ->live()
-                        ])->hidden(fn () => Auth::user()->hasRole('customer')),
-
-                Section::make('Order Details')
-                    ->columns(4)
-                    ->schema([
-                        DatePicker::make('order_date')
-                            ->label('Order Date')
-                            ->format('Y-m-d')
-                            ->displayFormat('d/m/Y')
-                            ->native(false)
-                            ->default(now()->format('Y-m-d'))
-                            ->readOnly(),
-                        TimePicker::make('order_time')
-                            ->label('Order Time')
-                            ->format('H:i')
-                            ->default(now()->format('H:i'))
-                            ->seconds(false)
-                            ->readOnly(),
-                        Select::make('status')
-                            ->label('Status')
-                            ->options([
-                                'draft' => 'Draft',
-                                'new' => 'New',
-                                'on-hold' => 'On Hold',
-                                'overdue' => 'Overdue',
-                                'cancelled' => 'Cancelled',
-                                'processed' => 'Processed',
-                            ])
-                            ->default('draft')
-                            ->disabledOn('create'),
-                        DatePicker::make('would_like_it_by')
-                            ->label('Would Like It By')
-                            ->format('Y-m-d')
-                            ->displayFormat('d/m/Y')
-                            ->native(false)
-                            ->required(),
-
-                            ]),
-                Section::make('')
-                    ->schema([
-                        Repeater::make('items')
-                        ->label('Items')
-                        ->columnSpanFull()
-                        ->relationship('items')
-                        ->columns(6)
-                        ->addAction(fn (Action $action) => $action->icon('heroicon-m-plus')->color('primary'))
-                        ->addActionLabel('Add Item')
-                        ->addActionAlignment('right')
-                        ->reorderable()
+                Grid::make([
+                    'sm' => 3,
+                    'xl' => 6,
+                ])->schema([
+                    Section::make('Customer Details')
+                        ->columns(4)
                         ->schema([
-                            Select::make('product_category_id')
-                                ->options(
-                                    ProductCategory::orderBy('name')->pluck('name', 'id')->toArray()
-
-                                )
-                                ->label('Category')
-                                ->placeholder('Select a category')
-                                ->searchable()
-                                ->required()
-                                ->live()
-                                ->afterStateUpdated(function (Set $set) {
-                                    $set('product_id', null);
-                                    $set('product_item_id', null);
-                                    $set('product_colour', null);
-                                    $set('special_instructions', null);
-                                    $set('quantity', null);
-                                }),
-                            Select::make('product_id')
-                                ->options(function (Get $get) {
-                                    $productCategoryId = $get('product_category_id');
-
-                                    if ($productCategoryId) {
-                                        return Product::where('product_category_id', $productCategoryId)->pluck('name', 'id')->toArray();
-                                    }
-
-                                    return [];
+                            Select::make('customer_id')
+                                ->label('Customer')
+                                ->relationship('customer', 'company', function (Builder $query) {
+                                    return $query->where('status', 'active');
                                 })
-                                ->label('Product')
-                                ->placeholder('Select a product')
-                                ->searchable()
                                 ->required()
-                                ->live()
-                                ->afterStateUpdated(function (Set $set) {
-                                    $set('product_item_id', null);
-                                    $set('product_colour', null);
-                                    $set('special_instructions', null);
-                                    $set('quantity', null);
-                                }),
-                            Select::make('product_item_id')
-                                ->options(function (Get $get) {
-                                    $productId = $get('product_id');
-                                    if ($productId) {
-                                        return ProductItem::where('product_id', $productId)->pluck('size', 'id')->toArray();
+                                ->preload()
+                                ->afterStateUpdated(function (Set $set, Get $get) {
+                                    $customer = Customer::find($get('customer_id'));
+                                    if ($customer) {
+                                        $set('grand_total', 0);
+                                        $set('delivery_charge', $customer->delivery_charge);
+                                        $set('charge_trigger', $customer->charge_trigger);
+                                        $set('apply_delivery_charge', $customer->apply_delivery_charge);
                                     }
-
-                                    return [];
                                 })
-                                ->label('Size')
-                                ->searchable()
-                                ->required()
-                                ->disabled(fn (Get $get) => ! $get('product_id'))
                                 ->live()
-                                ->afterStateUpdated(function (Set $set) {
-                                    $set('special_instructions', null);
-                                    $set('quantity', null);
-                                }),
-                            Select::make('product_colour')
-                                ->options(function (Get $get) {
-                                    $productId = $get('product_id');
-                                    if ($productId) {
-                                        $product = Product::find($productId);
-                                        if ($product && $product->colour_list) {
-                                            $colours = explode(';', $product->colour_list);
+                            ])->hidden(fn () => Auth::user()->hasRole('customer')),
 
-                                            return array_combine($colours, $colours);
-                                        }
-                                    }
-
-                                    return [];
-                                })
-                                ->label('Colour')
-                                ->searchable()
-                                ->required()
-                                ->disabled(fn (Get $get) => ! $get('product_id') || ! Product::find($get('product_id'))?->colour_list)
-                                ->live()
-                                ->afterStateUpdated(function (Set $set) {
-                                    $set('special_instructions', null);
-                                    $set('quantity', null);
-                                }),
-                            TextInput::make('quantity')
-                                ->label('Quantity')
-                                ->numeric()
-                                ->required()
-                                ->live(debounce: 1000)
-                                ->minValue(1)
-                                ->step(1)
-                                ->disabled(fn (Get $get) => ! $get('product_item_id'))
-                                ->afterStateUpdated(function (Get $get, Set $set) {
-                                    self::updateTotalPerItem($get, $set);
-                                }),
-                            TextInput::make('total')
-                                ->label('Total')
-                                ->numeric()
-                                ->prefix('$')
-                                ->live(debounce:500)
+                    Section::make('Order Details')
+                        ->columns(4)
+                        ->schema([
+                            DatePicker::make('order_date')
+                                ->label('Order Date')
+                                ->format('Y-m-d')
+                                ->displayFormat('d/m/Y')
+                                ->native(false)
+                                ->default(now()->format('Y-m-d'))
                                 ->readOnly(),
-                        ])
-                        ->live()
-                        ->minItems(1)
-                        ->afterStateUpdated(function (Set $set, Get $get) {
-                            self::updateTotals($get, $set);
-                        })
-                    ]),
-                Section::make('')
+                            TimePicker::make('order_time')
+                                ->label('Order Time')
+                                ->format('H:i')
+                                ->default(now()->format('H:i'))
+                                ->seconds(false)
+                                ->readOnly(),
+                            Select::make('status')
+                                ->label('Status')
+                                ->options([
+                                    'draft' => 'Draft',
+                                    'new' => 'New',
+                                    'on-hold' => 'On Hold',
+                                    'overdue' => 'Overdue',
+                                    'cancelled' => 'Cancelled',
+                                    'processed' => 'Processed',
+                                ])
+                                ->default('draft')
+                                ->disabledOn('create'),
+                            DatePicker::make('would_like_it_by')
+                                ->label('Would Like It By')
+                                ->format('Y-m-d')
+                                ->displayFormat('d/m/Y')
+                                ->native(false)
+                                ->required(),
+
+                                ]),
+                    Section::make('')
+                        ->schema([
+                            Repeater::make('items')
+                            ->label('Items')
+                            ->columnSpanFull()
+                            ->relationship('items')
+                            ->columns(6)
+                            ->addAction(fn (Action $action) => $action->icon('heroicon-m-plus')->color('primary'))
+                            ->addActionLabel('Add Item')
+                            ->addActionAlignment('right')
+                            ->reorderable()
+                            ->schema([
+                                Select::make('product_category_id')
+                                    ->options(
+                                        ProductCategory::orderBy('name')->pluck('name', 'id')->toArray()
+
+                                    )
+                                    ->label('Category')
+                                    ->placeholder('Select a category')
+                                    ->searchable()
+                                    ->required()
+                                    ->live()
+                                    ->afterStateUpdated(function (Set $set) {
+                                        $set('product_id', null);
+                                        $set('product_item_id', null);
+                                        $set('product_colour', null);
+                                        $set('special_instructions', null);
+                                        $set('quantity', null);
+                                    }),
+                                Select::make('product_id')
+                                    ->options(function (Get $get) {
+                                        $productCategoryId = $get('product_category_id');
+
+                                        if ($productCategoryId) {
+                                            return Product::where('product_category_id', $productCategoryId)->pluck('name', 'id')->toArray();
+                                        }
+
+                                        return [];
+                                    })
+                                    ->label('Product')
+                                    ->placeholder('Select a product')
+                                    ->searchable()
+                                    ->required()
+                                    ->live()
+                                    ->afterStateUpdated(function (Set $set) {
+                                        $set('product_item_id', null);
+                                        $set('product_colour', null);
+                                        $set('special_instructions', null);
+                                        $set('quantity', null);
+                                    }),
+                                Select::make('product_item_id')
+                                    ->options(function (Get $get) {
+                                        $productId = $get('product_id');
+                                        if ($productId) {
+                                            return ProductItem::where('product_id', $productId)->pluck('size', 'id')->toArray();
+                                        }
+
+                                        return [];
+                                    })
+                                    ->label('Size')
+                                    ->searchable()
+                                    ->required()
+                                    ->disabled(fn (Get $get) => ! $get('product_id'))
+                                    ->live()
+                                    ->afterStateUpdated(function (Set $set) {
+                                        $set('special_instructions', null);
+                                        $set('quantity', null);
+                                    }),
+                                Select::make('product_colour')
+                                    ->options(function (Get $get) {
+                                        $productId = $get('product_id');
+                                        if ($productId) {
+                                            $product = Product::find($productId);
+                                            if ($product && $product->colour_list) {
+                                                $colours = explode(';', $product->colour_list);
+
+                                                return array_combine($colours, $colours);
+                                            }
+                                        }
+
+                                        return [];
+                                    })
+                                    ->label('Colour')
+                                    ->searchable()
+                                    ->required()
+                                    ->disabled(fn (Get $get) => ! $get('product_id') || ! Product::find($get('product_id'))?->colour_list)
+                                    ->live()
+                                    ->afterStateUpdated(function (Set $set) {
+                                        $set('special_instructions', null);
+                                        $set('quantity', null);
+                                    }),
+                                TextInput::make('quantity')
+                                    ->label('Quantity')
+                                    ->numeric()
+                                    ->required()
+                                    ->live(debounce: 1000)
+                                    ->minValue(1)
+                                    ->step(1)
+                                    ->disabled(fn (Get $get) => ! $get('product_item_id'))
+                                    ->afterStateUpdated(function (Get $get, Set $set) {
+                                        self::updateTotalPerItem($get, $set);
+                                    }),
+                                TextInput::make('total')
+                                    ->label('Total')
+                                    ->numeric()
+                                    ->prefix('$')
+                                    ->live(debounce:500)
+                                    ->readOnly(),
+                            ])
+                            ->live()
+                            ->minItems(1)
+                            ->afterStateUpdated(function (Set $set, Get $get) {
+                                self::updateTotals($get, $set);
+                            })
+                        ]),
+                    Section::make('')
                     ->columns(4)
                     ->schema([
                         TextInput::make('delivery_charge')
@@ -262,6 +262,7 @@ class OrderResource extends Resource
                             ->label('Additional Instructions'),
                     ])
 
+                ])
             ]);
     }
 
@@ -275,7 +276,7 @@ class OrderResource extends Resource
                     ->label('Date In'),
                 TextColumn::make('would_like_it_by')
                     ->label('Required By'),
-                TextColumn::make('customer.company_name')
+                TextColumn::make('customer.company')
                     ->label('Customer'),
                 TextColumn::make('status')
                     ->label('Status')

@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Admin\Resources\InvoiceResource\Pages;
+namespace App\Filament\Admin\Resources\ItemResource\Pages;
 
-use App\Filament\Admin\Resources\InvoiceResource;
+use App\Filament\Admin\Resources\ItemResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditInvoice extends EditRecord
+class EditItem extends EditRecord
 {
-    protected static string $resource = InvoiceResource::class;
+    protected static string $resource = ItemResource::class;
 
     protected function getHeaderActions(): array
     {

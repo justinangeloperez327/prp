@@ -46,7 +46,7 @@ class CustomerResource extends Resource
                         'sm' => 1,
                     ])
                     ->schema([
-                        TextInput::make('company_name')
+                        TextInput::make('company')
                             ->label('Company Name')
                             ->placeholder('Company Name')
                             ->columnSpan(2)
@@ -158,7 +158,7 @@ class CustomerResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('company_name')
+                TextColumn::make('company')
                     ->label('Name')
                     ->searchable()
                     ->sortable(),
