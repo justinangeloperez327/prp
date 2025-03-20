@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\ContactResource\Pages;
 
 use App\Filament\Admin\Resources\ContactResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateContact extends CreateRecord

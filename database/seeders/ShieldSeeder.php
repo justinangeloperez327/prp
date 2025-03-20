@@ -6,7 +6,6 @@ use App\Models\User;
 use BezhanSalleh\FilamentShield\Support\Utils;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Spatie\Permission\PermissionRegistrar;
 
 class ShieldSeeder extends Seeder
@@ -46,21 +45,23 @@ class ShieldSeeder extends Seeder
         static::makeRolesWithPermissions($customerRolesWithPermissions);
         $this->command->info('Customer Role Created');
 
-        //Super
+        // Super
 
         $super = User::create([
-            'username' => 'superadmin',
+            'email' => 'superadmin@gmail.com',
             'password' => Hash::make('superadmin'),
+            'first_login' => false,
         ]);
 
         $super->assignRole('super_admin');
         $this->command->info('Super Admin User Created');
 
-        //Admin
+        // Admin
 
         $admin = User::create([
-            'username' => 'admin',
+            'email' => 'admin@gmail.com',
             'password' => Hash::make('admin'),
+            'first_login' => false,
         ]);
 
         $admin->assignRole('admin');

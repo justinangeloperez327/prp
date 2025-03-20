@@ -4,8 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
-use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -24,7 +22,7 @@ class User extends Authenticatable implements HasName
      * @var list<string>
      */
     protected $fillable = [
-        'username',
+        'email',
         'password',
     ];
 
@@ -65,6 +63,6 @@ class User extends Authenticatable implements HasName
     public function getFilamentName(): string
     {
         // Customize how the username is retrieved
-        return $this->username;
+        return $this->email;
     }
 }

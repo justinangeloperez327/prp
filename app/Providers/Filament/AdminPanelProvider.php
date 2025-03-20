@@ -2,27 +2,25 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Pages;
-use Filament\Panel;
-use Filament\Widgets;
-use Filament\PanelProvider;
-use Filament\Enums\ThemeMode;
-use Filament\Support\Colors\Color;
-use Filament\Http\Middleware\Authenticate;
 use App\Filament\Admin\Widgets\OrdersChart;
 use App\Filament\Auth\EditProfile;
-use App\Filament\Auth\Login;
+use Filament\Enums\ThemeMode;
 use Filament\FontProviders\GoogleFontProvider;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\EncryptCookies;
+use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Pages;
+use Filament\Panel;
+use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -31,7 +29,8 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('/p')
-            ->login(Login::class)
+            ->login()
+            ->passwordReset()
             ->profile(EditProfile::class)
             ->colors([
                 'danger' => Color::Rose,
@@ -65,7 +64,6 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('images/PRP-logo-Positive-120x40px.svg'))
             ->darkModeBrandLogo(asset('images/PRP-logo-Negative-120x40px.svg'))
             ->sidebarCollapsibleOnDesktop()
-
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->pages([

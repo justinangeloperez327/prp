@@ -2,19 +2,16 @@
 
 namespace App\Filament\Admin\Resources;
 
-use Filament\Forms;
-use Filament\Tables;
-use App\Models\Contact;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use Filament\Resources\Resource;
-use Filament\Forms\Components\Hidden;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Admin\Resources\ContactResource\Pages;
-use App\Filament\Admin\Resources\ContactResource\RelationManagers;
+use App\Models\Contact;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class ContactResource extends Resource
 {
@@ -35,20 +32,39 @@ class ContactResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->label('Contact Name')
-                    ->required(),
-                TextInput::make('direct_phone')
-                    ->label('Phone Number')
-                    ->required(),
-                TextInput::make('email')
-                    ->label('Email')
-                    ->email()
-                    ->required(),
-                // Customer ID hidden field, prefilled when the user accesses via the customer resource
-                Forms\Components\Hidden::make('customer_id')
-                    ->default(fn ($data) => request()->get('customer_id'))
-                    ->hidden(),
+                Section::make('Contact Details')
+                    ->columns([
+                        'md' => 3,
+                        'sm' => 1,
+                    ])->schema([
+                        Select::make('title')
+                            ->label('Title')
+                            ->options([
+                                'Mr' => 'Mr',
+                                'Mrs' => 'Mrs',
+                                'Ms' => 'Ms',
+                                'Miss' => 'Miss',
+                                'Dr' => 'Dr',
+                            ]),
+                        TextInput::make('first_name')
+                            ->label('First Name')
+                            ->required(),
+                        TextInput::make('last_name')
+                            ->label('Last Name')
+                            ->required(),
+                        TextInput::make('email')
+                            ->label('Email')
+                            ->email()
+                            ->required(),
+
+                        TextInput::make('direct_phone')
+                            ->label('Phone Number')
+                            ->required(),
+
+                        TextInput::make('mobile_phone')
+                            ->label('Mobile Number'),
+                    ]),
+
             ]);
     }
 
@@ -56,22 +72,38 @@ class ContactResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('first_name', 'last_name')
-                    ->label('Contact Name')
+                TextColumn::make('id')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('title')
+                    ->label('Title')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('direct_phone')
+                TextColumn::make('first_name')
+                    ->label('Firt Name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('last_name')
+                    ->label('Last Name')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('direct_phone')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('mobile_phone')
+                    ->searchable()
+                    ->sortable(),
+
             ])
             ->filters([
                 //
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([
@@ -92,7 +124,8 @@ class ContactResource extends Resource
         return [
             'index' => Pages\ListContacts::route('/'),
             // 'create' => Pages\CreateContact::route('/create'),
-            // 'edit' => Pages\EditContact::route('/{record}/edit'),
+            'edit' => Pages\EditContact::route('/{record}/edit'),
+            'view' => Pages\ViewContact::route('/{record}'),
         ];
     }
 }

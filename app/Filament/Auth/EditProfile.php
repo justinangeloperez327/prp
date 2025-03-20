@@ -2,7 +2,6 @@
 
 namespace App\Filament\Auth;
 
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
 
@@ -12,9 +11,7 @@ class EditProfile extends BaseEditProfile
     {
         return $form
             ->schema([
-                TextInput::make('username')
-                    ->required()
-                    ->maxLength(255),
+                $this->getEmailFormComponent(),
                 $this->getPasswordFormComponent(),
                 $this->getPasswordConfirmationFormComponent(),
             ]);

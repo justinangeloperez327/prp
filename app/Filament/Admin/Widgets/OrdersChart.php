@@ -41,7 +41,7 @@ class OrdersChart extends ChartWidget
                     'data' => [0, 1, 0, 0, 3, 5, 10, 15, 12, 10, 20, 25],
                     'backgroundColor' => '#9966FF',
                     'borderColor' => '#B3A0FF',
-                ]
+                ],
             ],
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         ];

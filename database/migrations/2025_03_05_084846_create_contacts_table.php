@@ -16,10 +16,9 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
-            $table->string('contact_code')->unique();
+            $table->string('contact_code')->nullable();
             $table->enum('title', ['Mr', 'Mrs', 'Ms', 'Miss', 'Dr'])->nullable();
             $table->string('first_name');
-
             $table->string('last_name')->nullable();
             $table->string('direct_phone')->nullable();
             $table->string('mobile_phone')->nullable();

@@ -33,7 +33,7 @@ class OrderItemFactory extends Factory
         $colour = $product->colour_list ? $this->faker->randomElement(explode(',', $product->colour_list)) : null;
         $quantity = $this->faker->numberBetween(1, 10);
 
-        $total = (!empty($productItem->price_per_quantity) ? $productItem->price_per_quantity : 0) * $quantity;
+        $total = (! empty($productItem->price_per_quantity) ? $productItem->price_per_quantity : 0) * $quantity;
 
         return [
             'order_id' => \App\Models\Order::factory(),

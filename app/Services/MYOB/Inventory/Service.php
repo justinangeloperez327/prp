@@ -6,8 +6,6 @@ class Service
 {
     /**
      * Fetch inventory data from MYOB.
-     *
-     * @return array
      */
     public function fetchInventory(): array
     {
@@ -17,9 +15,6 @@ class Service
 
     /**
      * Update inventory data in MYOB.
-     *
-     * @param array $inventoryData
-     * @return bool
      */
     public function updateInventory(array $inventoryData): bool
     {
@@ -29,8 +24,6 @@ class Service
 
     /**
      * Sync local inventory with MYOB.
-     *
-     * @return void
      */
     public function syncInventory(): void
     {
@@ -42,5 +35,4 @@ class Service
         // Placeholder for fetching all items logic
         return [];
     }
-
 }

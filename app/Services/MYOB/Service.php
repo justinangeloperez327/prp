@@ -7,8 +7,11 @@ use GuzzleHttp\Client;
 class Service
 {
     protected $client;
+
     protected $baseUri = 'https://accountrightapi.myob.cloud';
+
     protected $apiKey;
+
     protected $apiSecret;
 
     /**
@@ -61,7 +64,7 @@ class Service
     protected function getHeaders()
     {
         return [
-            'Authorization' => 'Basic ' . base64_encode($this->apiKey . ':' . $this->apiSecret),
+            'Authorization' => 'Basic '.base64_encode($this->apiKey.':'.$this->apiSecret),
             'Content-Type' => 'application/json',
         ];
     }

@@ -2,21 +2,19 @@
 
 namespace App\Filament\Admin\Resources\CustomerResource\RelationManagers;
 
-use Filament\Forms;
+use App\Models\Contact;
 use App\Models\User;
-use Filament\Tables;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Resources\RelationManagers\RelationManager;
 
 class ContactsRelationManager extends RelationManager
 {
@@ -74,11 +72,11 @@ class ContactsRelationManager extends RelationManager
                         'sm' => 1,
                     ])
                     ->schema([
-                        TextInput::make('user.email')
+                        TextInput::make('email')
                             ->email()
                             ->required()
                             ->maxLength(255),
-                        TextInput::make('user.password')
+                        TextInput::make('password')
                             ->password()
                             ->required()
                             ->maxLength(255),
@@ -104,17 +102,17 @@ class ContactsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data) {
-
                         if (User::where('email', $data['email'])->exists()) {
                             throw new \Exception('A user with this email already exists.');
                         }
                         $user = User::create([
-                            'name' => $data['first_name'].' '.$data['last_name'],
                             'email' => $data['email'],
-                            'passw1ord' => Hash::make($data['password']),
+                            'password' => Hash::make($data['password']),
                         ]);
 
                         $data['user_id'] = $user->id;
+                        $data['email'] = $data['email'];
+                        $data['contact_code'] = $this->generateContactCode();
 
                         return $data;
                     }),
@@ -128,5 +126,23 @@ class ContactsRelationManager extends RelationManager
                 //     Tables\Actions\DeleteBulkAction::make(),
                 // ]),
             ]);
+    }
+
+    private function generateContactCode()
+    {
+        // Check last contact code and increment
+        $lastContact = Contact::orderBy('contact_code', 'desc')->first();
+
+        if ($lastContact) {
+            $lastContactCode = $lastContact->contact_code;
+            $lastContactCode = str_replace('CC', '', $lastContactCode);
+            $lastContactCode = (int) $lastContactCode;
+            $lastContactCode++;
+
+            return 'CC'.str_pad($lastContactCode, 5, '0', STR_PAD_LEFT);
+        }
+
+        // Default to CC00001 if no previous contact exists
+        return 'CC00001';
     }
 }

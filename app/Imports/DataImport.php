@@ -14,7 +14,7 @@ class DataImport implements WithMultipleSheets
             2 => new ProductItemsSheetImport,
             3 => new CustomersSheetImport,
             4 => new ContactsSheetImport,
-            5 => new DiscountsSheetImport
+            5 => new DiscountsSheetImport,
         ];
     }
 }

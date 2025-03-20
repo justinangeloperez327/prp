@@ -36,8 +36,6 @@ class CustomerFactory extends Factory
 
     /**
      * Indicate that the customer has orders.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
     public function hasOrdersWithItems(int $orderCount = 5, int $itemCount = 3): Factory
     {
