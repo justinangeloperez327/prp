@@ -117,6 +117,7 @@ class OrderResource extends Resource
                                 ->required(),
 
                         ]),
+
                     Section::make('')
                         ->schema([
                             Repeater::make('items')

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Admin\Resources\OrderResource\Pages;
 
+use App\Events\OrderCreated;
 use App\Filament\Admin\Resources\OrderResource;
-use App\Models\Invoice;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateOrder extends CreateRecord
@@ -14,10 +14,6 @@ class CreateOrder extends CreateRecord
     {
         $order = $this->record;
 
-        Invoice::create([
-            'order_id' => $order->id,
-            'amount' => $order->grand_total,
-            'status' => 'pending',
-        ]);
+        OrderCreated::dispatch($order);
     }
 }

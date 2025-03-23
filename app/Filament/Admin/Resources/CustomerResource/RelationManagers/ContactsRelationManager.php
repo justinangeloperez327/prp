@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\CustomerResource\RelationManagers;
 
 use App\Models\Contact;
 use App\Models\User;
+use Exception;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -103,7 +104,7 @@ class ContactsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()
                     ->mutateFormDataUsing(function (array $data) {
                         if (User::where('email', $data['email'])->exists()) {
-                            throw new \Exception('A user with this email already exists.');
+                            throw new Exception('A user with this email already exists.');
                         }
                         $user = User::create([
                             'email' => $data['email'],

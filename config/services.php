@@ -35,4 +35,7 @@ return [
         ],
     ],
 
+    'myob' => [
+        'api_key' => env('MYOB_API_KEY'),
+    ],
 ];
