@@ -34,7 +34,7 @@ class OrderResource extends Resource
 
     protected static ?string $navigationGroup = 'Orders';
 
-    protected static ?string $navigationLabel = 'Orders';
+    protected static ?string $navigationLabel = 'Current Orders';
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 

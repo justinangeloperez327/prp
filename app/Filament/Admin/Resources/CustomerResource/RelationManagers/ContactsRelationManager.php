@@ -115,6 +115,8 @@ class ContactsRelationManager extends RelationManager
                         $data['email'] = $data['email'];
                         $data['contact_code'] = $this->generateContactCode();
 
+                        $user->assignRole('customer');
+
                         return $data;
                     }),
             ])

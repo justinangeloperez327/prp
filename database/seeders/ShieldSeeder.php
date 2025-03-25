@@ -31,7 +31,7 @@ class ShieldSeeder extends Seeder
 
         // Create Admin Role
         $adminRolesWithPermissions = '[{"name":"admin","guard_name":"web","permissions":["view_order","view_any_order","create_order","update_order","delete_order","delete_any_order",
-        "page_ProcessedOrders", "page_OverdueOrders", "page_OnHoldOrders", "page_NewOrders", "page_CancelledOrders", "page_CurrentOrders",
+        "page_ProcessedOrders", "page_OverdueOrders", "page_OnHoldOrders", "page_NewOrders", "page_CancelledOrders",
         "view_product","view_any_product","create_product","update_product","delete_product","delete_any_product",
         "view_product::category","view_any_product::category","create_product::category","update_product::category","delete_product::category","delete_any_product::category",
         "view_product::item","view_any_product::item","create_product::item","update_product::item","delete_product::item","delete_any_product::item",

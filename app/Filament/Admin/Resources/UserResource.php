@@ -32,11 +32,11 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('username')
-                    ->label('Username')
+                Forms\Components\TextInput::make('email')
+                    ->label('Email')
                     ->required()
-                    ->unique('users', 'username')
-                    ->placeholder('Enter the username'),
+                    ->unique('users', 'email')
+                    ->placeholder('Enter the Email Address'),
                 Forms\Components\CheckboxList::make('roles')
                     ->relationship('roles', 'name')
                     ->searchable(),
@@ -50,7 +50,7 @@ class UserResource extends Resource
                 TextColumn::make('id')
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('username')
+                TextColumn::make('email')
                     ->searchable()
                     ->sortable(),
             ])

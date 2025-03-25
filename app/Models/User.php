@@ -56,7 +56,6 @@ class User extends Authenticatable implements HasName
 
     public function canAccessFilament(): bool
     {
-        // Allow access if the user has any of the specified roles
         return $this->hasAnyRole(['admin', 'super_admin', 'customer']);
     }
 
