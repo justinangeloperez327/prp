@@ -31,7 +31,7 @@ class CreateMYOBInvioce
                 'Customer' => [
                     'UID' => $order->customer->customer_code,
                 ],
-                'ShipToAddress' => $order->customer->address,
+                'ShipToAddress' => $order->customer->full_address,
                 'Lines' => $order->items->map(function ($item) {
                     return [
                         'Type' => 'Transaction',

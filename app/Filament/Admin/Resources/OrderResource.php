@@ -53,7 +53,6 @@ class OrderResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-
             ->schema([
                 Grid::make([
                     'sm' => 3,
@@ -352,6 +351,7 @@ class OrderResource extends Resource
         if (Auth::user()->hasRole('customer')) {
             $contact = Contact::where('user_id', Auth::id())->first();
             $customer = Customer::where('id', $contact->customer_id)->first();
+
             $set('delivery_charge', $customer->delivery_charge);
             $set('charge_trigger', $customer->charge_trigger);
             $set('apply_delivery_charge', $customer->apply_delivery_charge);

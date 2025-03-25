@@ -31,6 +31,12 @@ class Customer extends Model
         'notes',
     ];
 
+    // I want full address here
+    public function getFullAddressAttribute(): string
+    {
+        return "{$this->street}, {$this->city}, {$this->state}, {$this->postcode}";
+    }
+
     public function contacts(): HasMany
     {
         return $this->hasMany(Contact::class);
