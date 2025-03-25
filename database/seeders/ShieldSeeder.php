@@ -41,7 +41,10 @@ class ShieldSeeder extends Seeder
         static::makeRolesWithPermissions($adminRolesWithPermissions);
         $this->command->info('Admin Role Created');
         //
-        $customerRolesWithPermissions = '[{"name":"customer","guard_name":"web","permissions":["view_order","view_any_order","create_order","update_order","delete_order","delete_any_order", "page_ProcessedOrders"]}]';
+        $customerRolesWithPermissions = '[{"name":"customer","guard_name":"web","permissions":["view_order","view_any_order","create_order","update_order","delete_order","delete_any_order", "page_ProcessedOrders",
+        "view_product","view_any_product",
+        "view_product::category","view_any_product::category",
+        "view_product::item","view_any_product::item"]}]';
         static::makeRolesWithPermissions($customerRolesWithPermissions);
         $this->command->info('Customer Role Created');
 
