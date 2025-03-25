@@ -271,6 +271,16 @@ class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function(Builder $query) {
+                if (Auth::user()->hasRole('customer')) {
+                    $contact = Contact::where('user_id', Auth::id())->first();
+                    $customer = Customer::where('id', $contact->customer_id)->first();
+
+                    return $query->where('customer_id', $customer->id);
+                }
+
+                return $query;
+            })
             ->columns([
                 TextColumn::make('purchase_order_no')
                     ->label('Order No'),
