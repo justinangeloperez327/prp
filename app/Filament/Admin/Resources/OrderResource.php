@@ -112,6 +112,7 @@ class OrderResource extends Resource
                                 ->label('Would Like It By')
                                 ->format('Y-m-d')
                                 ->displayFormat('d/m/Y')
+                                ->minDate(now())
                                 ->native(false)
                                 ->required(),
 
