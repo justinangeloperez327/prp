@@ -26,6 +26,6 @@ class CreateOrder extends CreateRecord
     {
         $order = $this->record;
 
-        OrderCreated::dispatch($order);
+        // OrderCreated::dispatch($order);
     }
 }
