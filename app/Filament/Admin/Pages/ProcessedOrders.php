@@ -42,7 +42,7 @@ class ProcessedOrders extends Page implements HasActions, HasForms, HasTable
         return $table
             ->query(
                 Order::query()
-                    ->where('status', 'processing')
+                    ->where('status', 'processed')
             )
             ->columns([
                 TextColumn::make('purchase_order_no')
@@ -70,14 +70,14 @@ class ProcessedOrders extends Page implements HasActions, HasForms, HasTable
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                    ->url(fn (Order $record) => route('filament.app.resources.orders.view', $record)),
+                    ->url(fn (Order $record) => route('filament.admin.resources.orders.view', $record)),
                 Tables\Actions\EditAction::make()
-                    ->url(fn (Order $record) => route('filament.app.resources.orders.edit', $record)),
+                    ->url(fn (Order $record) => route('filament.admin.resources.orders.edit', $record)),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 }

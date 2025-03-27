@@ -22,7 +22,7 @@ class OrderFactory extends Factory
             'order_time' => $this->faker->time(),
             'would_like_it_by' => $this->faker->date(),
             // 'due_date' => $this->faker->date(),
-            'status' => $this->faker->randomElement(['draft', 'new', 'processing', 'on-hold', 'cancelled', 'overdue']),
+            'status' => $this->faker->randomElement(['draft', 'new', 'processed', 'on-hold', 'cancelled', 'overdue']),
             'additional_instructions' => $this->faker->optional()->text(),
             'delivery_charge' => $this->faker->randomFloat(2, 0, 1000),
             'grand_total' => $this->faker->randomFloat(2, 0, 1000),

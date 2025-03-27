@@ -20,7 +20,7 @@ return new class extends Migration
             $table->decimal('delivery_charge', 10, 2)->default(0);
             $table->decimal('total', 10, 2)->default(0);
             $table->text('additional_instructions')->nullable();
-            $table->enum('status', ['draft', 'new', 'processing', 'cancelled', 'overdue', 'on-hold'])->default('draft');
+            $table->enum('status', ['draft', 'new', 'processed', 'cancelled', 'overdue', 'on-hold'])->default('draft');
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
 
             $table->json('myob_payload')->nullable();
