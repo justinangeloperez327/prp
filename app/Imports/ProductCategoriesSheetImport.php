@@ -2,8 +2,8 @@
 
 namespace App\Imports;
 
-use App\Models\ProductCategory;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -24,14 +24,13 @@ class ProductCategoriesSheetImport implements ToCollection, WithHeadingRow, With
     public function collection(Collection $collection)
     {
         foreach ($collection as $row) {
-            $productCategory = ProductCategory::firstOrCreate([
+            DB::table('product_categories')->updateOrInsert([
                 'category_uid' => $row['categoryunid'],
             ], [
                 'name' => $row['category_name'],
                 'status' => $row['active'] === 'Yes' ? 'active' : 'inactive',
                 'order' => $row['sort_order'],
             ]);
-            $productCategory->save();
         }
     }
 }

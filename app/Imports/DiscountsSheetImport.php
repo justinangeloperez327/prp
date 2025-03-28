@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\Discount;
 use App\Models\Product;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -30,11 +31,11 @@ class DiscountsSheetImport implements ToCollection, WithHeadingRow, WithChunkRea
             $product = Product::where('product_uid', $row['productunid'])->first();
 
             if ($row['discountunid'] && $customer && $product) {
-                Discount::firstOrCreate([
-                    'customer_id' => $customer->id,
-                    'product_id' => $product->id,
+                DB::table('discounts')->updateOrInsert([
                     'discount_unid' => $row['discountunid'],
                 ], [
+                    'customer_id' => $customer->id,
+                    'product_id' => $product->id,
                     'discount' => $row['discount'],
                     'status' => $row['active'] === 'Yes' ? 'active' : 'inactive',
                 ]);

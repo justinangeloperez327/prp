@@ -6,6 +6,7 @@ use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
@@ -42,7 +43,7 @@ class ContactsSheetImport implements ToCollection, WithHeadingRow, WithChunkRead
 
                 $user->assignRole('customer');
 
-                Contact::firstOrCreate([
+                DB::table('contacts')->updateOrInsert([
                     'contact_code' => $row['contactcode'],
                     'customer_id' => $customer->id,
                     'user_id' => $user->id,

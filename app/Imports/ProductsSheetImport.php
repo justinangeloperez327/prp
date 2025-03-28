@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -28,7 +29,7 @@ class ProductsSheetImport implements ToCollection, WithHeadingRow, WithChunkRead
             $category = ProductCategory::where('category_uid', $row['categoryunid'])->first();
 
             if ($category) {
-                Product::firstOrCreate([
+                DB::table('products')->updateOrInsert([
                     'product_uid' => $row['productunid'],
                 ], [
                     'product_category_id' => $category->id,

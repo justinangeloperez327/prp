@@ -36,20 +36,7 @@ class OrderItemsImport implements ToCollection, WithHeadingRow, WithChunkReading
                 $productItem = ProductItem::where('product_item_uid', $row['productitemunid'])->first();
 
                 if($product && $productCategory && $productItem) {
-                    OrderItem::firstOrCreate([
-                        'order_id' => $order->id,
-                        'product_id' => $product->id,
-                        'product_category_id' => $productCategory->id,
-                        'product_item_id' => $productItem->id,
-                    ], [
-                        'product_size' => $row['productitemsize'],
-                        'product_colour' => $row['productcolourlist'],
-                        'quantity' => $row['qty'] ? $row['qty'] : 0,
-                        'total' => $row['totalexgst'],
-                        'special_instructions' => $row['notes'],
-                    ]);
-
-                    DB::table('order_items')->firstOrCreate([
+                    DB::table('order_items')->updateOrInsert([
                         'order_id' => $order->id,
                         'product_id' => $product->id,
                         'product_category_id' => $productCategory->id,

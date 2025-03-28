@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\Contact;
 use App\Models\Order;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -27,7 +28,7 @@ class OrdersImport implements ToCollection, WithHeadingRow, WithChunkReading, Wi
         foreach($collection as $row) {
             $contact = Contact::where('contact_code', $row['contactcode'])->first();
             if($contact) {
-                Order::firstOrCreate([
+                DB::table('orders')->updateOrInsert([
                     'order_no' => $row['orderno'],
                 ], [
                     'contact_id' => $contact->id,

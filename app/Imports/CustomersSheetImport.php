@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Customer;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
@@ -26,7 +27,7 @@ class CustomersSheetImport implements ToCollection, WithHeadingRow, WithChunkRea
     {
         foreach ($collection as $row) {
             if ($row['customercode']) {
-                Customer::firstOrCreate([
+                DB::table('customers')->updateOrInsert([
                     'customer_code' => $row['customercode'],
                 ], [
                     'company' => $row['company'],

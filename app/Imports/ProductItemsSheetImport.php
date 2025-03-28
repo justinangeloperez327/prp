@@ -5,10 +5,11 @@ namespace App\Imports;
 use App\Models\Product;
 use App\Models\ProductItem;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class ProductItemsSheetImport implements ToCollection, WithHeadingRow, WithChunkReading, WithBatchInserts
 {
@@ -28,7 +29,7 @@ class ProductItemsSheetImport implements ToCollection, WithHeadingRow, WithChunk
             $product = Product::where('name', $row['product'])->first();
 
             if ($product) {
-                ProductItem::firstOrCreate([
+                DB::table('product_items')->updateOrInsert([
                     'product_item_uid' => $row['productitemunid'],
                 ], [
                     'product_id' => $product->id,
