@@ -20,7 +20,6 @@ class Order extends Model
         'would_like_it_by',
         'status',
         'additional_instructions',
-        'delivery_charge',
         'grand_total',
         'purchase_order_no',
         'dispatch_date',
