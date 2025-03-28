@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\OrderResource\Pages;
 
 use App\Events\OrderCreated;
 use App\Filament\Admin\Resources\OrderResource;
+use App\Models\Order;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,6 +24,7 @@ class CreateOrder extends CreateRecord
         }
 
         $data['status'] = 'new';
+        $data['order_no'] = $this->generateOrderNo();
 
         return $data;
     }
@@ -32,5 +34,19 @@ class CreateOrder extends CreateRecord
         $order = $this->record;
 
         // OrderCreated::dispatch($order);
+    }
+
+    private function generateOrderNo(): int
+    {
+        $order = Order::latest()->first();
+
+        if ($order) {
+            $lastOrderNo = $order->order_no;
+            $lastOrderNo = $lastOrderNo + 1;
+
+            return $lastOrderNo;
+        }
+
+        return 1;
     }
 }

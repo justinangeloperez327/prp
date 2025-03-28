@@ -46,7 +46,8 @@ class OrdersChart extends ChartWidget
 
         $currentMonth = date('n');
         $months = array_merge(range($currentMonth, 12), range(1, $currentMonth - 1));
-        $labels = array_map(fn($month) => date('M', mktime(0, 0, 0, $month, 1)), $months);
+        $labels = array_map(fn ($month) => date('M', mktime(0, 0, 0, $month, 1)), $months);
+
         return [
             'labels' => $labels,
             'datasets' => [

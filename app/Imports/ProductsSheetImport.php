@@ -2,7 +2,6 @@
 
 namespace App\Imports;
 
-use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class ProductsSheetImport implements ToCollection, WithHeadingRow, WithChunkReading, WithBatchInserts
+class ProductsSheetImport implements ToCollection, WithBatchInserts, WithChunkReading, WithHeadingRow
 {
     public function chunkSize(): int
     {

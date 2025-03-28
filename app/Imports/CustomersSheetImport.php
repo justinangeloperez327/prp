@@ -2,7 +2,6 @@
 
 namespace App\Imports;
 
-use App\Models\Customer;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -11,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class CustomersSheetImport implements ToCollection, WithHeadingRow, WithChunkReading, WithBatchInserts
+class CustomersSheetImport implements ToCollection, WithBatchInserts, WithChunkReading, WithHeadingRow
 {
     public function chunkSize(): int
     {

@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class ProductCategoriesSheetImport implements ToCollection, WithHeadingRow, WithChunkReading, WithBatchInserts
+class ProductCategoriesSheetImport implements ToCollection, WithBatchInserts, WithChunkReading, WithHeadingRow
 {
     public function chunkSize(): int
     {

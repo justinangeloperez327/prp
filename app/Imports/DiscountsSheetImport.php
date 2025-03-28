@@ -3,7 +3,6 @@
 namespace App\Imports;
 
 use App\Models\Customer;
-use App\Models\Discount;
 use App\Models\Product;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +11,7 @@ use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class DiscountsSheetImport implements ToCollection, WithHeadingRow, WithChunkReading, WithBatchInserts
+class DiscountsSheetImport implements ToCollection, WithBatchInserts, WithChunkReading, WithHeadingRow
 {
     public function chunkSize(): int
     {

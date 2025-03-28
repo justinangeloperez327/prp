@@ -3,7 +3,6 @@
 namespace App\Imports;
 
 use App\Models\Contact;
-use App\Models\Order;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -11,7 +10,7 @@ use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class OrdersImport implements ToCollection, WithHeadingRow, WithChunkReading, WithBatchInserts
+class OrdersImport implements ToCollection, WithBatchInserts, WithChunkReading, WithHeadingRow
 {
     public function chunkSize(): int
     {
@@ -25,9 +24,9 @@ class OrdersImport implements ToCollection, WithHeadingRow, WithChunkReading, Wi
 
     public function collection(Collection $collection)
     {
-        foreach($collection as $row) {
+        foreach ($collection as $row) {
             $contact = Contact::where('contact_code', $row['contactcode'])->first();
-            if($contact) {
+            if ($contact) {
                 DB::table('orders')->updateOrInsert([
                     'order_no' => $row['orderno'],
                 ], [
@@ -48,31 +47,29 @@ class OrdersImport implements ToCollection, WithHeadingRow, WithChunkReading, Wi
     {
         $status = strtolower($status);
 
-        if($status === 'draft order') {
+        if ($status === 'draft order') {
             return 'draft';
         }
 
-        if($status === 'new order') {
+        if ($status === 'new order') {
             return 'new';
         }
 
-        if($status === 'overdue order') {
+        if ($status === 'overdue order') {
             return 'overdue';
         }
 
-        if($status === 'onhold order') {
+        if ($status === 'onhold order') {
             return 'on-hold';
         }
 
-        if($status === 'on-hold order') {
+        if ($status === 'on-hold order') {
             return 'on-hold';
         }
 
-        if(!$status) {
+        if (! $status) {
             return 'draft';
         }
-
-
 
         return $status;
     }

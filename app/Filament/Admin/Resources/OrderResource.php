@@ -271,7 +271,7 @@ class OrderResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function(Builder $query) {
+            ->modifyQueryUsing(function (Builder $query) {
                 if (Auth::user()->hasRole('customer')) {
                     $contact = Contact::where('user_id', Auth::id())->first();
                     $customer = Customer::where('id', $contact->customer_id)->first();
@@ -282,16 +282,19 @@ class OrderResource extends Resource
                 return $query;
             })
             ->columns([
-                TextColumn::make('purchase_order_no')
-                    ->label('Order No'),
+                TextColumn::make('order_no')
+                    ->label('Order No')
+                    ->sortable(),
                 TextColumn::make('order_time')
                     ->label('Date In'),
                 TextColumn::make('would_like_it_by')
-                    ->label('Required By'),
+                    ->label('Required By')
+                    ->sortable(),
                 TextColumn::make('customer.company')
                     ->label('Customer'),
                 TextColumn::make('status')
                     ->label('Status')
+                    ->sortable()
                     ->badge()
                     ->color(fn (Order $order): string => match ($order->status) {
                         'new' => 'green',

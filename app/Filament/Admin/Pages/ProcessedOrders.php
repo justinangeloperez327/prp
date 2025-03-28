@@ -45,16 +45,19 @@ class ProcessedOrders extends Page implements HasActions, HasForms, HasTable
                     ->where('status', 'processed')
             )
             ->columns([
-                TextColumn::make('purchase_order_no')
-                    ->label('Order No'),
+                TextColumn::make('order_no')
+                    ->label('Order No')
+                    ->sortable(),
                 TextColumn::make('order_time')
                     ->label('Date In'),
                 TextColumn::make('would_like_it_by')
-                    ->label('Required By'),
+                    ->label('Required By')
+                    ->sortable(),
                 TextColumn::make('customer.company')
                     ->label('Customer'),
                 TextColumn::make('status')
                     ->label('Status')
+                    ->sortable()
                     ->badge()
                     ->color(fn (Order $order): string => match ($order->status) {
                         'new' => 'green',
