@@ -6,13 +6,24 @@ use App\Models\Product;
 use App\Models\ProductItem;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class ProductItemsSheetImport implements ToCollection, WithHeadingRow
+class ProductItemsSheetImport implements ToCollection, WithHeadingRow, WithChunkReading, WithBatchInserts
 {
+    public function chunkSize(): int
+    {
+        return 1000;
+    }
+
+    public function batchSize(): int
+    {
+        return 1000;
+    }
+
     public function collection(Collection $collection)
     {
-
         foreach ($collection as $row) {
             $product = Product::where('name', $row['product'])->first();
 

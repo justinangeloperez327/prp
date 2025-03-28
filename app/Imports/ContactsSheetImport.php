@@ -8,10 +8,22 @@ use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class ContactsSheetImport implements ToCollection, WithHeadingRow
+class ContactsSheetImport implements ToCollection, WithHeadingRow, WithChunkReading, WithBatchInserts
 {
+    public function chunkSize(): int
+    {
+        return 1000;
+    }
+
+    public function batchSize(): int
+    {
+        return 1000;
+    }
+
     public function collection(Collection $collection)
     {
         $password = Hash::make('password');

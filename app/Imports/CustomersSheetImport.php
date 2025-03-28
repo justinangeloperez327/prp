@@ -6,10 +6,22 @@ use App\Models\Customer;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class CustomersSheetImport implements ToCollection, WithHeadingRow
+class CustomersSheetImport implements ToCollection, WithHeadingRow, WithChunkReading, WithBatchInserts
 {
+    public function chunkSize(): int
+    {
+        return 1000;
+    }
+
+    public function batchSize(): int
+    {
+        return 1000;
+    }
+
     public function collection(Collection $collection)
     {
         foreach ($collection as $row) {
