@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->decimal('total', 10, 2);
             $table->text('special_instructions')->nullable();
+            $table->enum('status', ['include'])->default('include');
             $table->timestamps();
         });
     }

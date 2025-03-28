@@ -13,16 +13,21 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('purchase_order_no');
+            $table->string('order_no')->unique();
             $table->date('order_date');
             $table->time('order_time');
-            $table->date('would_like_it_by')->nullable();
-            $table->decimal('delivery_charge', 10, 2)->default(0);
-            $table->decimal('total', 10, 2)->default(0);
-            $table->text('additional_instructions')->nullable();
-            $table->enum('status', ['draft', 'new', 'processed', 'cancelled', 'overdue', 'on-hold'])->default('draft');
-            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
 
+            $table->date('would_like_it_by')->nullable();
+            $table->date('dispatch_date')->nullable();
+            $table->enum('status', ['draft', 'new', 'processed', 'cancelled', 'overdue', 'on-hold', 'deleted'])->nullable();
+
+            $table->string('purchase_order_no')->nullable();
+            $table->decimal('total', 10, 2)->default(0);
+
+            $table->text('additional_instructions')->nullable();
+
+            $table->foreignId('contact_id')->nullable();
+            $table->foreignId('customer_id')->constrained();
             $table->json('myob_payload')->nullable();
 
             $table->softDeletes();

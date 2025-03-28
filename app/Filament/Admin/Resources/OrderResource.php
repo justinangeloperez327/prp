@@ -112,7 +112,7 @@ class OrderResource extends Resource
                                 ->label('Would Like It By')
                                 ->format('Y-m-d')
                                 ->displayFormat('d/m/Y')
-                                ->minDate(now())
+                                ->minDate(today()->addDay())
                                 ->native(false)
                                 ->required(),
 
@@ -310,9 +310,9 @@ class OrderResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ]);
     }
 

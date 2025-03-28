@@ -19,11 +19,11 @@ class Order extends Model
         'order_time',
         'would_like_it_by',
         'status',
-        'status',
         'additional_instructions',
         'delivery_charge',
         'grand_total',
         'purchase_order_no',
+        'dispatch_date',
     ];
 
     public function customer(): BelongsTo
