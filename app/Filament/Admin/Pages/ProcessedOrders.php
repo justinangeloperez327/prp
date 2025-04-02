@@ -35,6 +35,9 @@ class ProcessedOrders extends Page implements HasActions, HasForms, HasTable
     {
         return Order::query()
             ->where('status', 'processed')
+            ->when(Auth::user()->hasRole('customer'), function ($query) {
+                return $query->where('customer_id', Auth::user()->contact->customer_id);
+            })
             ->count();
     }
 
