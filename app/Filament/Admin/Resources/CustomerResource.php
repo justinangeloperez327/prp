@@ -73,8 +73,7 @@ class CustomerResource extends Resource
                             ->prefixIcon('heroicon-s-printer')
                             ->mask('+61 9999 9999')
                             ->placeholder('+61 9999 9999')
-                            ->columnSpan(2)
-                            ->required(),
+                            ->columnSpan(2),
                         TextInput::make('website')
                             ->label('Website Address')
                             ->placeholder('https://example.com')

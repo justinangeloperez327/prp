@@ -85,14 +85,22 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Product Name'),
+                    ->label('Product Name')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('category.name')
-                    ->label('Category'),
+                    ->label('Category')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('promotion')
-                    ->label('Promotion'),
+                    ->label('Promotion')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
+                    ->searchable()
+                    ->sortable()
                     ->color(fn (Product $product): string => match ($product->status) {
                         'active' => 'success',
                         'inactive' => 'danger',

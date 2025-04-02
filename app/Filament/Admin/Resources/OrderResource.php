@@ -24,6 +24,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -284,14 +285,17 @@ class OrderResource extends Resource
             ->columns([
                 TextColumn::make('order_no')
                     ->label('Order No')
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('order_time')
                     ->label('Date In'),
                 TextColumn::make('would_like_it_by')
                     ->label('Required By')
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('customer.company')
-                    ->label('Customer'),
+                    ->label('Customer')
+                    ->searchable(),
                 TextColumn::make('status')
                     ->label('Status')
                     ->sortable()
@@ -303,19 +307,30 @@ class OrderResource extends Resource
                         'cancelled' => 'gray',
                         'processed' => 'blue',
                         default => 'gray',
-                    }),
+                    })
+                    ->searchable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->label('Status')
+                    ->multiple()
+                    ->options([
+                        'draft' => 'Draft',
+                        'new' => 'New',
+                        'on-hold' => 'On Hold',
+                        'overdue' => 'Overdue',
+                        'cancelled' => 'Cancelled',
+                        'processed' => 'Processed',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 

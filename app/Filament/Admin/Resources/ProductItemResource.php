@@ -126,13 +126,20 @@ class ProductItemResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('size'),
+                TextColumn::make('size')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('product.name')
-                    ->label('Product'),
-                // TextColumn::make('size'),
-                TextColumn::make('gsm'),
+                    ->label('Product')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('gsm')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('status')
                     ->label('Status')
+                    ->searchable()
+                    ->sortable()
                     ->badge()
                     ->color(fn (ProductItem $productItem): string => match ($productItem->status) {
                         'active' => 'success',

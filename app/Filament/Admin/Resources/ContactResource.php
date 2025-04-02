@@ -96,7 +96,6 @@ class ContactResource extends Resource
                 TextColumn::make('mobile_phone')
                     ->searchable()
                     ->sortable(),
-
             ])
             ->filters([
                 //

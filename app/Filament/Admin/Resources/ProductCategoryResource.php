@@ -61,10 +61,16 @@ class ProductCategoryResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label('Category Name'),
+                    ->label('Category Name')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('order')
-                    ->label('Order'),
-                TextColumn::make('status'),
+                    ->label('Order')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('status')
+                    ->sortable()
+                    ->searchable(),
             ])
             ->filters([
                 //
