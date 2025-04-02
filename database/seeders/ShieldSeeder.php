@@ -54,6 +54,7 @@ class ShieldSeeder extends Seeder
             'email' => 'superadmin@gmail.com',
             'password' => Hash::make('superadmin'),
             'first_login' => false,
+            'email_verified_at' => now(),
         ]);
 
         $super->assignRole('super_admin');
@@ -65,6 +66,7 @@ class ShieldSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'password' => Hash::make('admin'),
             'first_login' => false,
+            'email_verified_at' => now(),
         ]);
 
         $admin->assignRole('admin');
