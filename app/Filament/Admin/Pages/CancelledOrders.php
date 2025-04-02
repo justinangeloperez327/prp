@@ -2,17 +2,18 @@
 
 namespace App\Filament\Admin\Pages;
 
+use Filament\Tables;
 use App\Models\Order;
-use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Pages\Page;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Pages\Page;
-use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Table;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class CancelledOrders extends Page implements HasActions, HasForms, HasTable
 {
@@ -39,9 +40,13 @@ class CancelledOrders extends Page implements HasActions, HasForms, HasTable
 
     public static function table(Table $table): Table
     {
+
         return $table
             ->query(
                 Order::query()
+                    ->when(Auth::user()->hasRole('customer'), function ($query) {
+                        return $query->where('customer_id', Auth::user()->contact->customer_id);
+                    })
                     ->where('status', 'cancelled')
             )
             ->columns([
