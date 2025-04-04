@@ -38,7 +38,7 @@ class OrdersImport implements ToCollection, WithBatchInserts, WithChunkReading, 
                     'dispatch_date' => $row['despatchdate'] ? date('Y-m-d', strtotime($row['despatchdate'])) : null,
                     'status' => $this->generateStatus($row['status']),
                     'purchase_order_no' => $row['ponumber'],
-                    'grand_total' => $row['totalexgst'],
+                    'grand_total' => $row['totalexgst'] ? $row['totalexgst'] : 0,
                 ]);
             }
         }
