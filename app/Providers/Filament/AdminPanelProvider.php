@@ -2,16 +2,18 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Admin\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Enums\ThemeMode;
 use App\Filament\Auth\EditProfile;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\MaxWidth;
+use App\Filament\Admin\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use App\Filament\Admin\Widgets\OrdersChart;
+use App\Filament\Admin\Widgets\LatestOrders;
 use App\Filament\Admin\Widgets\StatsOverview;
+use App\Filament\Admin\Widgets\CustomersChart;
 use Filament\FontProviders\GoogleFontProvider;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -77,6 +79,8 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 StatsOverview::class,
                 OrdersChart::class,
+                CustomersChart::class,
+                LatestOrders::class,
             ])
             ->middleware([
                 EncryptCookies::class,
