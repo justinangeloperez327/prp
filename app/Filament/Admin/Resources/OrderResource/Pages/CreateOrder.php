@@ -38,7 +38,7 @@ class CreateOrder extends CreateRecord
 
     private function generateOrderNo(): int
     {
-        $order = Order::latest()->first();
+        $order = Order::orderBy('order_no', 'desc')->first();
 
         if ($order) {
             $lastOrderNo = $order->order_no;

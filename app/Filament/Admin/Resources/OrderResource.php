@@ -310,6 +310,7 @@ class OrderResource extends Resource
                     })
                     ->searchable(),
             ])
+            ->defaultSort('order_no', 'desc')
             ->filters([
                 SelectFilter::make('status')
                     ->label('Status')

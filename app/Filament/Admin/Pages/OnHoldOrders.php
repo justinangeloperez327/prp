@@ -13,7 +13,6 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
-use Illuminate\Database\Eloquent\Builder;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class OnHoldOrders extends Page implements HasActions, HasForms, HasTable
@@ -45,12 +44,13 @@ class OnHoldOrders extends Page implements HasActions, HasForms, HasTable
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-            $query->where('status', 'on-hold')
-                ->when(Auth::user()->hasRole('customer'), function ($query) {
-                    return $query->where('customer_id', Auth::user()->contact->customer_id);
-                });
-            })
+            ->query(
+                Order::query()
+                    ->when(Auth::user()->hasRole('customer'), function ($query) {
+                        return $query->where('customer_id', Auth::user()->contact->customer_id);
+                    })
+                    ->where('status', 'on-hold')
+            )
             ->columns([
                 TextColumn::make('order_no')
                     ->label('Order No')
@@ -75,6 +75,7 @@ class OnHoldOrders extends Page implements HasActions, HasForms, HasTable
                         default => 'gray',
                     }),
             ])
+            ->defaultSort('order_no', 'desc')
             ->filters([
                 //
             ])

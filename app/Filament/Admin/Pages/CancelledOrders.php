@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -46,12 +45,13 @@ class CancelledOrders extends Page implements HasActions, HasForms, HasTable
     {
 
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                $query->where('status', 'cancelled')
+            ->query(
+                Order::query()
                     ->when(Auth::user()->hasRole('customer'), function ($query) {
                         return $query->where('customer_id', Auth::user()->contact->customer_id);
-                    });
-            })
+                    })
+                    ->where('status', 'cancelled')
+            )
             ->columns([
                 TextColumn::make('order_no')
                     ->label('Order No')
@@ -76,6 +76,7 @@ class CancelledOrders extends Page implements HasActions, HasForms, HasTable
                         default => 'gray',
                     }),
             ])
+            ->defaultSort('order_no', 'desc')
             ->filters([
                 //
             ])
