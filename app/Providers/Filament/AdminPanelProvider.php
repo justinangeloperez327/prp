@@ -11,6 +11,7 @@ use Filament\Support\Enums\MaxWidth;
 use App\Filament\Admin\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use App\Filament\Admin\Widgets\OrdersChart;
+use App\Filament\Auth\RequestPasswordReset;
 use App\Filament\Admin\Widgets\LatestOrders;
 use App\Filament\Admin\Widgets\StatsOverview;
 use App\Filament\Admin\Widgets\CustomersChart;
@@ -33,7 +34,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('/p')
             ->login()
-            ->passwordReset()
+            ->passwordReset(RequestPasswordReset::class)
             ->profile(EditProfile::class)
             ->colors([
                 'danger' => Color::Rose,

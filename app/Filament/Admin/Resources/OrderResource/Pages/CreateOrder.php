@@ -7,7 +7,7 @@ use App\Filament\Admin\Resources\OrderResource;
 use App\Models\Order;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Notification;
 class CreateOrder extends CreateRecord
 {
     protected static string $resource = OrderResource::class;
@@ -33,7 +33,7 @@ class CreateOrder extends CreateRecord
     {
         $order = $this->record;
 
-        // OrderCreated::dispatch($order);
+        OrderCreated::dispatch($order);
     }
 
     private function generateOrderNo(): int
