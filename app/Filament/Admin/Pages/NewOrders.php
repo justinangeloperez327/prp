@@ -14,6 +14,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Illuminate\Database\Eloquent\Builder;
 
 class NewOrders extends Page implements HasActions, HasForms, HasTable
 {
@@ -44,13 +45,12 @@ class NewOrders extends Page implements HasActions, HasForms, HasTable
     public static function table(Table $table): Table
     {
         return $table
-            ->query(
-                Order::query()
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->where('status', 'new')
                     ->when(Auth::user()->hasRole('customer'), function ($query) {
                         return $query->where('customer_id', Auth::user()->contact->customer_id);
-                    })
-                    ->where('status', 'new')
-            )
+                    });
+                })
             ->columns([
                 TextColumn::make('order_no')
                     ->label('Order No')

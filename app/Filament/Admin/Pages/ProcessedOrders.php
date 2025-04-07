@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -44,13 +45,12 @@ class ProcessedOrders extends Page implements HasActions, HasForms, HasTable
     public static function table(Table $table): Table
     {
         return $table
-            ->query(
-                Order::query()
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->where('status', 'processed')
                     ->when(Auth::user()->hasRole('customer'), function ($query) {
                         return $query->where('customer_id', Auth::user()->contact->customer_id);
-                    })
-                    ->where('status', 'processed')
-            )
+                    });
+            })
             ->columns([
                 TextColumn::make('order_no')
                     ->label('Order No')
