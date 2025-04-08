@@ -2,9 +2,10 @@
 
 namespace App\Notifications;
 
+use App\Mail\OrderUpdated as OrderUpdatedMailable;
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
 
@@ -33,17 +34,9 @@ class OrderUpdatedNotification extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(object $notifiable): Mailable
     {
-
-        $items = $this->getOrderItems();
-
-        return (new MailMessage)
-            ->subject('[Updated Order] for OmiDesign - '.$this->order->order_no)
-            ->view('emails.order-updated', [
-                'order' => $this->order,
-                'items' => $items,
-            ]);
+        return new OrderUpdatedMailable($this->order);
     }
 
     /**

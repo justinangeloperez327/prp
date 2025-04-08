@@ -2,11 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Mail\OrderCreated as OrderCreatedMailable;
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Collection;
 
 class OrderCreatedNotification extends Notification
 {
@@ -17,7 +17,7 @@ class OrderCreatedNotification extends Notification
      */
     public function __construct(private Order $order)
     {
-        $this->order->load('items.product');
+        //
     }
 
     /**
@@ -33,17 +33,9 @@ class OrderCreatedNotification extends Notification
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(object $notifiable): Mailable
     {
-
-        $items = $this->getOrderItems();
-
-        return (new MailMessage)
-            ->subject('[New Order] for OmiDesign - '.$this->order->order_no)
-            ->view('emails.order-created', [
-                'order' => $this->order,
-                'items' => $items,
-            ]);
+        return new OrderCreatedMailable($this->order);
     }
 
     /**
@@ -56,18 +48,5 @@ class OrderCreatedNotification extends Notification
         return [
             //
         ];
-    }
-
-    private function getOrderItems(): Collection
-    {
-        return $this->order->items->map(function ($item) {
-            return [
-                'product' => $item->product->name.' '.$item->product_size.($item->product_colour ? ' - '.$item->product_colour : ''),
-                'instructions' => $item->special_instructions,
-                'quantity' => $item->quantity,
-                'total' => $item->total,
-            ];
-        });
-
     }
 }

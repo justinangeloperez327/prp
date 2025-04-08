@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\OrderResource\Pages;
 
+use App\Events\OrderUpdated;
 use App\Filament\Admin\Resources\OrderResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
@@ -21,5 +22,12 @@ class EditOrder extends EditRecord
             Actions\ViewAction::make(),
             Actions\DeleteAction::make(),
         ];
+    }
+
+    protected function afterSave(): void
+    {
+        $order = $this->record->refresh();
+
+        OrderUpdated::dispatch($order);
     }
 }

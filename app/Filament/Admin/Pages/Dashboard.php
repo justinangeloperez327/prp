@@ -2,8 +2,8 @@
 
 namespace App\Filament\Admin\Pages;
 
-use Illuminate\Support\Facades\Auth;
 use Filament\Pages\Dashboard as BasePage;
+use Illuminate\Support\Facades\Auth;
 
 class Dashboard extends BasePage
 {

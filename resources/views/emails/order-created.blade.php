@@ -298,52 +298,79 @@ img {
     word-break: break-all;
 }
 
+.orders table,
+.orders th,
+.orders td {
+    border: 1px solid #e8e5ef;
+    border-collapse: collapse;
+    padding: 8px;
+    text-align: left;
+}
+
+
     </style>
 </head>
 <body>
-    <p><span class="label">Order No:</span> <span class="value">{{ $order->order_no }}</span></p>
-    <p><span class="label">Order Date:</span> <span class="value">{{ $order->order_date->format('d/m/Y') }} (like it by: {{ $order->would_like_it_by }})</span></p>
-    <p>
-        OmiDesign<br>
-        omi omi<br>
-        10 Jomary Court<br>
-        Berwick VIC 3806<br>
-        Australia
-    </p>
-    <p><span class="label">Email:</span> <span class="value"><a href="mailto:omi@design.com">omi@design.com</a></span></p>
-    <p><span class="label">Order Details:</span></p>
-    <table>
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Instructions</th>
-                <th>Qty</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($items as $item)
-                <tr>
-                    <td>{{ $item['product'] }}</td>
-                    <td>{{ $item['instructions'] ?? '' }}</td>
-                    <td>{{ $item['quantity'] }}</td>
-                    <td>${{ $item['total'] }}</td>
-                </tr>
-            @endforeach
-            <tr>
-                <td colspan="2" style="text-align: right;"><strong>Delivery Charge:</strong></td>
-                <td></td>
-                <td>${{ $order->delivery_charge }}</td>
-            </tr>
-            <tr>
-                <td colspan="2" style="text-align: right;"><strong>Order Total:</strong></td>
-                <td></td>
-                <td>${{ $order->grand_total }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="wrapper">
+        <div class="content">
+            <div class="header">
+                <img src="{{ asset('images/PRP-logo-Positive-120x40px.svg') }}" alt="Press Ready Paper Logo" style="height: 5rem;">
+            </div>
 
-    <p><span class="label">Purchase Order No:</span> <span class="value">{{ $order->purchase_order_no }}</span></p>
-    <p><span class="label">Additional Order Notes:</span> <span class="value">{{ $order->additional_instructions }}</span></p>
+            <!-- Email Body -->
+            <div class="body">
+                <div class="inner-body">
+                    <div class="content-cell">
+                        <p><span class="label">Order No:</span> <span class="value">{{ $order->order_no }}</span></p>
+                        <p><span class="label">Order Date:</span> <span class="value">{{ $order->order_date->format('d/m/Y') }} (like it by: {{ $order->would_like_it_by }})</span></p>
+                        <p>
+                            OmiDesign<br>
+                            omi omi<br>
+                            10 Jomary Court<br>
+                            Berwick VIC 3806<br>
+                            Australia
+                        </p>
+                        <p><span class="label">Email:</span> <span class="value"><a href="mailto:omi@design.com">omi@design.com</a></span></p>
+                        <p><span class="label">Order Details:</span></p>
+                        <table class="orders">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Instructions</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($items as $item)
+                                    <tr>
+                                        <td>{{ $item['product'] }}</td>
+                                        <td>{{ $item['instructions'] ?? '' }}</td>
+                                        <td>{{ $item['quantity'] }}</td>
+                                        <td>${{ $item['total'] }}</td>
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    <td colspan="2" style="text-align: right;"><strong>Delivery Charge:</strong></td>
+                                    <td></td>
+                                    <td>${{ $order->delivery_charge }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="text-align: right;"><strong>Order Total:</strong></td>
+                                    <td></td>
+                                    <td>${{ $order->grand_total }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p><span class="label">Purchase Order No:</span> <span class="value">{{ $order->purchase_order_no }}</span></p>
+                        <p><span class="label">Additional Order Notes:</span> <span class="value">{{ $order->additional_instructions }}</span></p>
+                    </div>
+                </div>
+            </div>
+
+            {{ $footer ?? '' }}
+        </div>
+    </div>
 </body>
 </html>
