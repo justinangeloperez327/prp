@@ -39,7 +39,7 @@ class CreateOrder extends CreateRecord
     private function generateOrderNo(): int
     {
         $order = Order::query()
-            ->orderBy('order_no', 'desc')
+            ->orderBy('id', 'desc')
             ->first();
 
         if ($order) {

@@ -91,19 +91,11 @@ class NewOrders extends Page implements HasActions, HasForms, HasTable
                     }),
             ])
             ->defaultSort('id', 'desc')
-            ->filters([
-                //
-            ])
             ->actions([
                 Tables\Actions\ViewAction::make()
                     ->url(fn (Order $record) => route('filament.admin.resources.orders.view', $record)),
                 Tables\Actions\EditAction::make()
                     ->url(fn (Order $record) => route('filament.admin.resources.orders.edit', $record)),
-            ])
-            ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
             ]);
     }
 }
