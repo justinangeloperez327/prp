@@ -43,6 +43,7 @@ class ProductResource extends Resource
                     ->schema([
                         TextInput::make('name')
                             ->label('Product Name')
+                            ->searchable()
                             ->placeholder('Enter a Product Name')
                             ->required(),
                         Radio::make('status')
@@ -74,6 +75,7 @@ class ProductResource extends Resource
                             ->default('Default')
                             ->required(),
                         Textarea::make('description')
+                            ->searchable()
                             ->label('Product Description')
                             ->columnSpan(2),
                     ]),
@@ -94,7 +96,6 @@ class ProductResource extends Resource
                     ->sortable(),
                 TextColumn::make('promotion')
                     ->label('Promotion')
-                    ->searchable()
                     ->sortable(),
                 TextColumn::make('status')
                     ->label('Status')

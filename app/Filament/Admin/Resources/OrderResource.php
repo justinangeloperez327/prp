@@ -134,7 +134,6 @@ class OrderResource extends Resource
                                     Select::make('product_category_id')
                                         ->options(
                                             ProductCategory::orderBy('name')->pluck('name', 'id')->toArray()
-
                                         )
                                         ->label('Category')
                                         ->placeholder('Select a category')
@@ -206,7 +205,10 @@ class OrderResource extends Resource
                                         ->required()
                                         ->disabled(fn (Get $get) => ! $get('product_id') || ! Product::find($get('product_id'))?->colour_list)
                                         ->live()
-                                        ->afterStateUpdated(function (Set $set) {
+                                        ->afterStateUpdated(function (Set $set, $state) {
+                                            if (! $state) {
+                                                $set('product_colour', null); // Clear the field if no valid color is selected
+                                            }
                                             $set('special_instructions', null);
                                             $set('quantity', null);
                                         }),
@@ -287,12 +289,20 @@ class OrderResource extends Resource
                     ->label('Order No')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('order_date')
+                    ->label('Order Date')
+                    ->sortable()
+                    ->searchable()
+                    ->date('d/m/Y'),
                 TextColumn::make('order_time')
-                    ->label('Date In'),
+                    ->label('Order Time')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('would_like_it_by')
                     ->label('Required By')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->date('d/m/Y'),
                 TextColumn::make('customer.company')
                     ->label('Customer')
                     ->searchable(),

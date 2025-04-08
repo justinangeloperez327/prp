@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
 
-class OrderCreatedNotification extends Notification
+class OrderUpdatedNotification extends Notification
 {
     use Queueable;
 
@@ -39,8 +39,8 @@ class OrderCreatedNotification extends Notification
         $items = $this->getOrderItems();
 
         return (new MailMessage)
-            ->subject('[New Order] for OmiDesign - '.$this->order->order_no)
-            ->view('emails.order-created', [
+            ->subject('[Updated Order] for OmiDesign - '.$this->order->order_no)
+            ->view('emails.order-updated', [
                 'order' => $this->order,
                 'items' => $items,
             ]);

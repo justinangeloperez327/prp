@@ -11,6 +11,7 @@ class Dashboard extends BasePage
         if (auth()->user()->hasRole('customer')) {
             return false;
         }
+
         return parent::canAccess();
     }
 }

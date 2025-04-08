@@ -3,8 +3,8 @@
 namespace App\Http\Responses;
 
 use App\Filament\Admin\Resources\OrderResource;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Features\SupportRedirects\Redirector;
 
 class LoginResponse extends \Filament\Http\Responses\Auth\LoginResponse

@@ -23,7 +23,16 @@ class Order extends Model
         'grand_total',
         'purchase_order_no',
         'dispatch_date',
+        'delivery_charge',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'order_date' => 'date',
+            'would_like_it_by' => 'date',
+        ];
+    }
 
     public function customer(): BelongsTo
     {

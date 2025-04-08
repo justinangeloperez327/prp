@@ -39,6 +39,7 @@ class OrdersImport implements ToCollection, WithBatchInserts, WithChunkReading, 
                     'status' => $this->generateStatus($row['status']),
                     'purchase_order_no' => $row['ponumber'],
                     'grand_total' => $row['totalexgst'] ? $row['totalexgst'] : 0,
+                    'delivery_charge' => $row['deliverycharge'] ? $row['deliverycharge'] : 0,
                 ]);
             }
         }

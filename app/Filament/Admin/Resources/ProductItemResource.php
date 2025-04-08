@@ -43,6 +43,7 @@ class ProductItemResource extends Resource
                         TextInput::make('size')
                             ->label('Product Item Size')
                             ->columnSpan(3)
+                            ->searchable()
                             ->placeholder('Enter a Product Item Size')
                             ->required(),
                         Radio::make('status')

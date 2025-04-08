@@ -2,18 +2,18 @@
 
 namespace App\Filament\Admin\Pages;
 
-use Filament\Tables;
 use App\Models\Order;
-use Filament\Pages\Page;
-use Filament\Tables\Table;
-use Illuminate\Support\Facades\Auth;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Pages\Page;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
-use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class OnHoldOrders extends Page implements HasActions, HasForms, HasTable
 {
@@ -54,14 +54,29 @@ class OnHoldOrders extends Page implements HasActions, HasForms, HasTable
             ->columns([
                 TextColumn::make('order_no')
                     ->label('Order No')
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('order_date')
+                    ->label('Order Date')
+                    ->sortable()
+                    ->searchable()
+                    ->date('d/m/Y'),
                 TextColumn::make('order_time')
-                    ->label('Date In'),
+                    ->label('Order Time')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('would_like_it_by')
                     ->label('Required By')
-                    ->sortable(),
+                    ->searchable()
+                    ->sortable()
+                    ->date('d/m/Y'),
+                TextColumn::make('would_like_it_by')
+                    ->label('Required By')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('customer.company')
-                    ->label('Customer'),
+                    ->label('Customer')
+                    ->searchable(),
                 TextColumn::make('status')
                     ->label('Status')
                     ->sortable()
@@ -75,7 +90,7 @@ class OnHoldOrders extends Page implements HasActions, HasForms, HasTable
                         default => 'gray',
                     }),
             ])
-            ->defaultSort('order_no', 'desc')
+            ->defaultSort('id', 'desc')
             ->filters([
                 //
             ])

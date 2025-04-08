@@ -48,9 +48,11 @@ class ContactResource extends Resource
                             ]),
                         TextInput::make('first_name')
                             ->label('First Name')
+                            ->searchable()
                             ->required(),
                         TextInput::make('last_name')
                             ->label('Last Name')
+                            ->searchable()
                             ->required(),
                         TextInput::make('email')
                             ->label('Email')

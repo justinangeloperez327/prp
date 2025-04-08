@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Console\Commands\DataSeed;
 use App\Providers\Filament\AdminPanelProvider;
-use Illuminate\Support\ServiceProvider;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
