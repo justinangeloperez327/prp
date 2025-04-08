@@ -196,10 +196,8 @@ class CustomerResource extends Resource
                 SelectFilter::make('status')
                     ->options(Status::class),
             ])
-            ->paginated([
-                5, 10, 25, 50, 100, 'all',
-            ])
-            ->defaultPaginationPageOption(10)
+            ->paginated([5, 10, 25, 50, 100])
+            ->defaultPaginationPageOption(5)
             ->extremePaginationLinks()
             ->actions([
                 Tables\Actions\ViewAction::make()->label('View')->icon(null),

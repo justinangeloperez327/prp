@@ -107,6 +107,8 @@ class ProductResource extends Resource
                         'inactive' => 'danger',
                     }),
             ])
+            ->paginated([5, 10, 25, 50, 100])
+            ->defaultPaginationPageOption(5)
             ->filters([
                 //
             ])

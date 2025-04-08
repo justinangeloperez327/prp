@@ -334,6 +334,8 @@ class OrderResource extends Resource
                         'processed' => 'Processed',
                     ]),
             ])
+            ->paginated([5, 10, 25, 50, 100])
+            ->defaultPaginationPageOption(5)
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
