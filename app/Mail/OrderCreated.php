@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use App\Models\Order;
-use Filament\Forms\Components\View;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
