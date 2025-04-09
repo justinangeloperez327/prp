@@ -125,7 +125,7 @@ class OrderResource extends Resource
                                 ->label('Items')
                                 ->columnSpanFull()
                                 ->relationship('items')
-                                ->columns(6)
+                                ->columns(8)
                                 ->addAction(fn (Action $action) => $action->icon('heroicon-m-plus')->color('primary'))
                                 ->addActionLabel('Add Item')
                                 ->addActionAlignment('right')
@@ -229,6 +229,11 @@ class OrderResource extends Resource
                                         ->prefix('$')
                                         ->live(debounce: 500)
                                         ->readOnly(),
+                                    TextInput::make('special_instructions')
+                                        ->label('Special Instructions')
+                                        ->placeholder('Any special instructions for this item')
+                                        ->maxLength(255)
+                                        ->columnSpan(2),
                                 ])
                                 ->live()
                                 ->minItems(1)
