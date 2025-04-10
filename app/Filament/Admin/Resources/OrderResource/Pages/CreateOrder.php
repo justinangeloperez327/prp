@@ -19,6 +19,8 @@ class CreateOrder extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        dd($data['apply_delivery_charge']);
+
         if (Auth::user()->hasRole('customer')) {
             $data['customer_id'] = Auth::user()->contact->customer_id;
         }

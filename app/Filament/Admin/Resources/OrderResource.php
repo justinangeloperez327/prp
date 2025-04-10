@@ -2,32 +2,33 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\OrderResource\Pages;
-use App\Models\Contact;
-use App\Models\Customer;
+use Filament\Tables;
 use App\Models\Order;
+use App\Models\Contact;
 use App\Models\Product;
-use App\Models\ProductCategory;
-use App\Models\ProductItem;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\TimePicker;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
+use App\Models\Customer;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\ProductItem;
+use App\Models\ProductCategory;
+use Filament\Resources\Resource;
+use App\Enums\DeliveryChargeTypes;
+use Filament\Forms\Components\Grid;
 use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TimePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Actions\Action;
+use App\Filament\Admin\Resources\OrderResource\Pages;
 
 class OrderResource extends Resource
 {
@@ -64,10 +65,10 @@ class OrderResource extends Resource
                         ->schema([
                             Select::make('customer_id')
                                 ->label('Customer')
+                                ->required()
                                 ->relationship('customer', 'company', function (Builder $query) {
                                     return $query->where('status', 'active');
                                 })
-                                ->required()
                                 ->preload()
                                 ->afterStateUpdated(function (Set $set, Get $get) {
                                     $customer = Customer::find($get('customer_id'));
@@ -80,7 +81,6 @@ class OrderResource extends Resource
                                 })
                                 ->live(),
                         ])->hidden(fn () => Auth::user()->hasRole('customer')),
-
                     Section::make('Order Details')
                         ->columns(4)
                         ->schema([
@@ -126,10 +126,6 @@ class OrderResource extends Resource
                                 ->columnSpanFull()
                                 ->relationship('items')
                                 ->columns(8)
-                                ->addAction(fn (Action $action) => $action->icon('heroicon-m-plus')->color('primary'))
-                                ->addActionLabel('Add Item')
-                                ->addActionAlignment('right')
-                                ->reorderable()
                                 ->schema([
                                     Select::make('product_category_id')
                                         ->options(
@@ -235,6 +231,10 @@ class OrderResource extends Resource
                                         ->maxLength(255)
                                         ->columnSpan(2),
                                 ])
+                                ->addAction(fn (Action $action) => $action->icon('heroicon-m-plus')->color('primary'))
+                                ->addActionLabel('Add Item')
+                                ->addActionAlignment('right')
+                                ->reorderable()
                                 ->live()
                                 ->minItems(1)
                                 ->afterStateUpdated(function (Set $set, Get $get) {
@@ -374,8 +374,8 @@ class OrderResource extends Resource
     public static function updateTotals(Get $get, Set $set): void
     {
         if (Auth::user()->hasRole('customer')) {
-            $contact = Contact::where('user_id', Auth::id())->first();
-            $customer = Customer::where('id', $contact->customer_id)->first();
+            $contact = Contact::where('user_id', Auth::id())->firstOrFail();
+            $customer = Customer::where('id', $contact->customer_id)->firstOrFail();
 
             $set('delivery_charge', $customer->delivery_charge);
             $set('charge_trigger', $customer->charge_trigger);
@@ -393,20 +393,24 @@ class OrderResource extends Resource
         $chargeTrigger = $get('charge_trigger');
         $applyDeliveryCharge = $get('apply_delivery_charge');
 
-        if ($applyDeliveryCharge === 'none') {
+        if ($applyDeliveryCharge === DeliveryChargeTypes::NONE->value) {
             $deliveryCharge = 0;
         }
 
-        if ($applyDeliveryCharge === 'fixed') {
+        if ($applyDeliveryCharge === DeliveryChargeTypes::FIXED->value) {
             $grandTotal = $grandTotal + $deliveryCharge;
         }
 
-        if ($applyDeliveryCharge === 'minimum-order') {
+        if ($applyDeliveryCharge === DeliveryChargeTypes::MINIMUM->value) {
             if ($grandTotal >= $chargeTrigger) {
                 $grandTotal = $grandTotal + $deliveryCharge;
             } else {
                 $deliveryCharge = 0;
             }
+        }
+
+        if ($grandTotal < 150) {
+            $deliveryCharge = 15;
         }
 
         $grandTotal = round($grandTotal, 2);

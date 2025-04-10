@@ -43,7 +43,6 @@ class ProductResource extends Resource
                     ->schema([
                         TextInput::make('name')
                             ->label('Product Name')
-                            ->searchable()
                             ->placeholder('Enter a Product Name')
                             ->required(),
                         Radio::make('status')
@@ -56,7 +55,6 @@ class ProductResource extends Resource
                         Select::make('product_category_id')
                             ->label('Product Category')
                             ->options(ProductCategory::all()->pluck('name', 'id'))
-                            ->searchable()
                             ->placeholder('Please select a product category')
                             ->required(),
                         Select::make('table_list_style')
@@ -75,7 +73,6 @@ class ProductResource extends Resource
                             ->default('Default')
                             ->required(),
                         Textarea::make('description')
-                            ->searchable()
                             ->label('Product Description')
                             ->columnSpan(2),
                     ]),
