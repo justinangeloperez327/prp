@@ -385,9 +385,11 @@ class OrderResource extends Resource
         $selectedItems = collect($get('items'))->filter(fn ($item) => ! empty($item['product_item_id']) && ! empty($item['quantity']));
         $prices = ProductItem::whereIn('id', $selectedItems->pluck('product_item_id'))->pluck('price_per_quantity', 'id');
 
-        $grandTotal = $selectedItems->sum(function ($item) use ($prices) {
+        $subTotal = $selectedItems->sum(function ($item) use ($prices) {
             return ($item['quantity'] * $prices[$item['product_item_id']]) / 1000;
         });
+
+        $grandTotal = 0;
 
         $deliveryCharge = $get('delivery_charge');
         $chargeTrigger = $get('charge_trigger');
@@ -398,19 +400,17 @@ class OrderResource extends Resource
         }
 
         if ($applyDeliveryCharge === DeliveryChargeTypes::FIXED->value) {
-            $grandTotal = $grandTotal + $deliveryCharge;
+            $grandTotal = $subTotal + $deliveryCharge;
         }
 
         if ($applyDeliveryCharge === DeliveryChargeTypes::MINIMUM->value) {
-            if ($grandTotal >= $chargeTrigger) {
-                $grandTotal = $grandTotal + $deliveryCharge;
-            } else {
+            if ($subTotal < $chargeTrigger) {
+                $grandTotal = $subTotal + $deliveryCharge;
+            }
+
+            if ($subTotal > $chargeTrigger) {
                 $deliveryCharge = 0;
             }
-        }
-
-        if ($grandTotal < 150) {
-            $deliveryCharge = 15;
         }
 
         $grandTotal = round($grandTotal, 2);
