@@ -46,7 +46,7 @@ class CustomerResource extends Resource
                         TextInput::make('company')
                             ->label('Company Name')
                             ->placeholder('Company Name')
-                            ->searchable()
+
                             ->columnSpan(2)
                             ->required(),
                         Radio::make('status')
@@ -61,13 +61,13 @@ class CustomerResource extends Resource
                             ->label('Phone Number')
                             ->prefixIcon('heroicon-s-phone')
                             ->mask('+61 9999 9999')
-                            ->searchable()
+
                             ->placeholder('+61 9999 9999')
                             ->columnSpan(2)
                             ->required(),
                         TextInput::make('email')
                             ->label('Email Address')
-                            ->searchable()
+
                             ->prefixIcon('heroicon-s-envelope')
                             ->columnSpan(2)
                             ->required(),
@@ -75,12 +75,12 @@ class CustomerResource extends Resource
                             ->label('Fax Number')
                             ->prefixIcon('heroicon-s-printer')
                             ->mask('+61 9999 9999')
-                            ->searchable()
+
                             ->placeholder('+61 9999 9999')
                             ->columnSpan(2),
                         TextInput::make('website')
                             ->label('Website Address')
-                            ->searchable()
+
                             ->placeholder('https://example.com')
                             ->prefixIcon('heroicon-s-globe-alt')
                             ->columnSpan(2)
