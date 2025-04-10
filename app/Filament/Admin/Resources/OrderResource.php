@@ -77,6 +77,7 @@ class OrderResource extends Resource
                                         $set('delivery_charge', $customer->delivery_charge);
                                         $set('charge_trigger', $customer->charge_trigger);
                                         $set('apply_delivery_charge', $customer->apply_delivery_charge);
+                                        $set('applied_delivery_charge', $customer->delivery_charge);
                                     }
                                 })
                                 ->live(),
@@ -113,7 +114,7 @@ class OrderResource extends Resource
                                 ->label('Would Like It By')
                                 ->format('Y-m-d')
                                 ->displayFormat('d/m/Y')
-                                ->minDate(today()->addDay())
+                                ->minDate(today())
                                 ->native(false)
                                 ->required(),
 
@@ -244,7 +245,7 @@ class OrderResource extends Resource
                     Section::make('')
                         ->columns(4)
                         ->schema([
-                            TextInput::make('delivery_charge')
+                            TextInput::make('applied_delivery_charge')
                                 ->label('Delivery Charge')
                                 ->columnSpan(2)
                                 ->numeric()
@@ -380,6 +381,7 @@ class OrderResource extends Resource
             $set('delivery_charge', $customer->delivery_charge);
             $set('charge_trigger', $customer->charge_trigger);
             $set('apply_delivery_charge', $customer->apply_delivery_charge);
+            $set('applied_delivery_charge', $customer->delivery_charge);
         }
 
         $selectedItems = collect($get('items'))->filter(fn ($item) => ! empty($item['product_item_id']) && ! empty($item['quantity']));
@@ -389,7 +391,7 @@ class OrderResource extends Resource
             return ($item['quantity'] * $prices[$item['product_item_id']]) / 1000;
         });
 
-        $grandTotal = 0;
+        $grandTotal = $subTotal;
 
         $deliveryCharge = $get('delivery_charge');
         $chargeTrigger = $get('charge_trigger');
@@ -397,24 +399,26 @@ class OrderResource extends Resource
 
         if ($applyDeliveryCharge === DeliveryChargeTypes::NONE->value) {
             $deliveryCharge = 0;
+            $set('applied_delivery_charge', $deliveryCharge);
         }
 
         if ($applyDeliveryCharge === DeliveryChargeTypes::FIXED->value) {
             $grandTotal = $subTotal + $deliveryCharge;
+            $set('applied_delivery_charge', $deliveryCharge);
         }
 
         if ($applyDeliveryCharge === DeliveryChargeTypes::MINIMUM->value) {
             if ($subTotal < $chargeTrigger) {
                 $grandTotal = $subTotal + $deliveryCharge;
+                $set('applied_delivery_charge', $deliveryCharge);
             }
 
             if ($subTotal > $chargeTrigger) {
-                $deliveryCharge = 0;
+                $set('applied_delivery_charge', 0);
             }
         }
 
         $grandTotal = round($grandTotal, 2);
         $set('grand_total', $grandTotal);
-        $set('delivery_charge', $deliveryCharge);
     }
 }
