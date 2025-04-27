@@ -219,16 +219,6 @@ class OrderResource extends Resource
                                         Fieldset::make('')
                                             ->columns(1)
                                             ->schema([
-                                                Placeholder::make('price_per_unit')
-                                                    ->label('Price Per Unit/Pack')
-                                                    ->inlineLabel()
-                                                    ->content(function (Get $get) {
-                                                        $productItem = ProductItem::find($get('product_item_id'));
-                                                        if ($productItem) {
-                                                            return '$' . number_format($productItem->price_per_quantity, 2);
-                                                        }
-                                                        return '$0.00';
-                                                    }),
                                                 TextInput::make('quantity')
                                                     ->label('Quantity')
                                                     ->inlineLabel()
@@ -259,7 +249,7 @@ class OrderResource extends Resource
                                                         return '$0.00';
                                                     }),
                                                 TextInput::make('special_instructions')
-                                                    ->label('Special Instructions')
+                                                    ->label('Instructions')
                                                     ->inlineLabel()
                                                     ->placeholder('Any special instructions for this item')
                                                     ->maxLength(255),
