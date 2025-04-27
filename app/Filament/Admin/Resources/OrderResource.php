@@ -16,9 +16,11 @@ use App\Models\ProductCategory;
 use Filament\Resources\Resource;
 use App\Enums\DeliveryChargeTypes;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Split;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
@@ -27,6 +29,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TimePicker;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Actions\Action;
 use App\Filament\Admin\Resources\OrderResource\Pages;
 
@@ -117,130 +120,162 @@ class OrderResource extends Resource
                                 ->minDate(today())
                                 ->native(false)
                                 ->required(),
-
                         ]),
 
                     Section::make('')
                         ->schema([
                             Repeater::make('items')
                                 ->label('Items')
-                                ->columnSpanFull()
                                 ->relationship('items')
-                                ->columns(8)
                                 ->schema([
-                                    Select::make('product_category_id')
-                                        ->options(
-                                            ProductCategory::orderBy('name')->pluck('name', 'id')->toArray()
-                                        )
-                                        ->label('Category')
-                                        ->placeholder('Select a category')
-                                        ->searchable()
-                                        ->required()
-                                        ->live()
-                                        ->afterStateUpdated(function (Set $set) {
-                                            $set('product_id', null);
-                                            $set('product_item_id', null);
-                                            $set('product_colour', null);
-                                            $set('special_instructions', null);
-                                            $set('quantity', null);
-                                        }),
-                                    Select::make('product_id')
-                                        ->options(function (Get $get) {
-                                            $productCategoryId = $get('product_category_id');
-
-                                            if ($productCategoryId) {
-                                                return Product::where('product_category_id', $productCategoryId)->pluck('name', 'id')->toArray();
-                                            }
-
-                                            return [];
-                                        })
-                                        ->label('Product')
-                                        ->placeholder('Select a product')
-                                        ->searchable()
-                                        ->required()
-                                        ->live()
-                                        ->afterStateUpdated(function (Set $set) {
-                                            $set('product_item_id', null);
-                                            $set('product_colour', null);
-                                            $set('special_instructions', null);
-                                            $set('quantity', null);
-                                        }),
-                                    Select::make('product_item_id')
-                                        ->options(function (Get $get) {
-                                            $productId = $get('product_id');
-                                            if ($productId) {
-                                                return ProductItem::where('product_id', $productId)->pluck('size', 'id')->toArray();
-                                            }
-
-                                            return [];
-                                        })
-                                        ->label('Size')
-                                        ->searchable()
-                                        ->required()
-                                        ->disabled(fn (Get $get) => ! $get('product_id'))
-                                        ->live()
-                                        ->afterStateUpdated(function (Set $set) {
-                                            $set('special_instructions', null);
-                                            $set('quantity', null);
-                                        }),
-                                    Select::make('product_colour')
-                                        ->options(function (Get $get) {
-                                            $productId = $get('product_id');
-                                            if ($productId) {
-                                                $product = Product::find($productId);
-                                                if ($product && $product->colour_list) {
-                                                    $colours = explode(';', $product->colour_list);
-
-                                                    return array_combine($colours, $colours);
-                                                }
-                                            }
-
-                                            return [];
-                                        })
-                                        ->label('Colour')
-                                        ->searchable()
-                                        ->required()
-                                        ->disabled(fn (Get $get) => ! $get('product_id') || ! Product::find($get('product_id'))?->colour_list)
-                                        ->live()
-                                        ->afterStateUpdated(function (Set $set, $state) {
-                                            if (! $state) {
-                                                $set('product_colour', null); // Clear the field if no valid color is selected
-                                            }
-                                            $set('special_instructions', null);
-                                            $set('quantity', null);
-                                        }),
-                                    TextInput::make('quantity')
-                                        ->label('Quantity')
-                                        ->numeric()
-                                        ->required()
-                                        ->live(debounce: 1000)
-                                        ->minValue(1)
-                                        ->step(1)
-                                        ->disabled(fn (Get $get) => ! $get('product_item_id'))
-                                        ->afterStateUpdated(function (Get $get, Set $set) {
-                                            self::updateTotalPerItem($get, $set);
-                                        }),
-                                    TextInput::make('total')
-                                        ->label('Total')
-                                        ->numeric()
-                                        ->prefix('$')
-                                        ->live(debounce: 500)
-                                        ->readOnly(),
-                                    TextInput::make('special_instructions')
-                                        ->label('Special Instructions')
-                                        ->placeholder('Any special instructions for this item')
-                                        ->maxLength(255)
-                                        ->columnSpan(2),
+                                    Split::make([
+                                        Fieldset::make('')
+                                            ->columns(1)
+                                            ->schema([
+                                                Select::make('product_category_id')
+                                                    ->inlineLabel()
+                                                    ->options(
+                                                        ProductCategory::orderBy('name')->pluck('name', 'id')->toArray()
+                                                    )
+                                                    ->label('Category')
+                                                    ->placeholder('Select a category')
+                                                    ->searchable()
+                                                    ->required()
+                                                    ->live()
+                                                    ->afterStateUpdated(function (Set $set) {
+                                                        $set('product_id', null);
+                                                        $set('product_item_id', null);
+                                                        $set('product_colour', null);
+                                                        $set('special_instructions', null);
+                                                        $set('quantity', null);
+                                                    })->columnSpan(1),
+                                                Select::make('product_id')
+                                                    ->inlineLabel()
+                                                    ->options(function (Get $get) {
+                                                        $productCategoryId = $get('product_category_id');
+                                                        if ($productCategoryId) {
+                                                            return Product::where('product_category_id', $productCategoryId)->pluck('name', 'id')->toArray();
+                                                        }
+                                                        return [];
+                                                    })
+                                                    ->disabled(fn (Get $get) => ! $get('product_category_id'))
+                                                    ->label('Product')
+                                                    ->placeholder('Select a product')
+                                                    ->searchable()
+                                                    ->required()
+                                                    ->live()
+                                                    ->afterStateUpdated(function (Set $set) {
+                                                        $set('product_item_id', null);
+                                                        $set('product_colour', null);
+                                                        $set('special_instructions', null);
+                                                        $set('quantity', null);
+                                                    })->columnSpan(1),
+                                                Select::make('product_item_id')
+                                                    ->inlineLabel()
+                                                    ->options(function (Get $get) {
+                                                        $productId = $get('product_id');
+                                                        if ($productId) {
+                                                            return ProductItem::where('product_id', $productId)->pluck('size', 'id')->toArray();
+                                                        }
+                                                        return [];
+                                                    })
+                                                    ->label('Size')
+                                                    ->placeholder('Select a size')
+                                                    ->searchable()
+                                                    ->required()
+                                                    ->disabled(fn (Get $get) => ! $get('product_id'))
+                                                    ->live()
+                                                    ->afterStateUpdated(function (Set $set) {
+                                                        $set('special_instructions', null);
+                                                        $set('quantity', null);
+                                                    })->columnSpan(1),
+                                                Select::make('product_colour')
+                                                    ->inlineLabel()
+                                                    ->options(function (Get $get) {
+                                                        $productId = $get('product_id');
+                                                        if ($productId) {
+                                                            $product = Product::find($productId);
+                                                            if ($product && $product->colour_list) {
+                                                                $colours = explode(';', $product->colour_list);
+                                                                return array_combine($colours, $colours);
+                                                            }
+                                                        }
+                                                        return [];
+                                                    })
+                                                    ->label('Colour')
+                                                    ->placeholder('Select a colour')
+                                                    ->searchable()
+                                                    ->required()
+                                                    ->disabled(fn (Get $get) => ! $get('product_id') || ! Product::find($get('product_id'))?->colour_list)
+                                                    ->live()
+                                                    ->afterStateUpdated(function (Set $set, $state) {
+                                                        if (! $state) {
+                                                            $set('product_colour', null);
+                                                        }
+                                                        $set('special_instructions', null);
+                                                        $set('quantity', null);
+                                                    })->columnSpan(1),
+                                            ]),
+                                        Fieldset::make('')
+                                            ->columns(1)
+                                            ->schema([
+                                                Placeholder::make('price_per_unit')
+                                                    ->label('Price Per Unit/Pack')
+                                                    ->inlineLabel()
+                                                    ->content(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        if ($productItem) {
+                                                            return '$' . number_format($productItem->price_per_quantity, 2);
+                                                        }
+                                                        return '$0.00';
+                                                    }),
+                                                TextInput::make('quantity')
+                                                    ->label('Quantity')
+                                                    ->inlineLabel()
+                                                    ->numeric()
+                                                    ->required()
+                                                    ->live(debounce: 1000)
+                                                    ->minValue(1)
+                                                    ->step(1)
+                                                    ->disabled(fn (Get $get) => ! $get('product_item_id'))
+                                                    ->afterStateUpdated(function (Get $get, Set $set) {
+                                                        self::updateTotalPerItem($get, $set);
+                                                    })->helperText(function(Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        if ($productItem?->sheets_per_mill_pack !== null) {
+                                                            return number_format($productItem->sheets_per_mill_pack) . ' pieces per pack * ' . $get('quantity') . ' quantity = ' . number_format(($productItem->sheets_per_mill_pack * $get('quantity'))) . ' pieces';
+                                                        }
+                                                        return 'Total Quantity: ' . number_format($get('quantity')) . ' pieces';
+                                                    })
+                                                    ->columnSpan(1),
+                                                Placeholder::make('total')
+                                                    ->label('Total')
+                                                    ->inlineLabel()
+                                                    ->content(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        if ($productItem) {
+                                                            return '$' . number_format($get('total'), 2);
+                                                        }
+                                                        return '$0.00';
+                                                    }),
+                                                TextInput::make('special_instructions')
+                                                    ->label('Special Instructions')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Any special instructions for this item')
+                                                    ->maxLength(255),
+                                            ]),
+                                    ])
+                                    ->id('items')
                                 ])
                                 ->addAction(fn (Action $action) => $action->icon('heroicon-m-plus')->color('primary'))
                                 ->addActionLabel('Add Item')
                                 ->addActionAlignment('right')
-                                ->reorderable()
                                 ->live()
                                 ->minItems(1)
                                 ->afterStateUpdated(function (Set $set, Get $get) {
                                     self::updateTotals($get, $set);
-                                }),
+                                })
+                                ->extraAttributes(['id' => 'order-items']),
                         ]),
                     Section::make('')
                         ->columns(4)
