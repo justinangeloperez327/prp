@@ -10,8 +10,14 @@ class CreateCustomer extends CreateRecord
 {
     protected static string $resource = CustomerResource::class;
 
-    // after create
-    // generate customer code
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['delivery_charge'] = $data['apply_delivery_charge'] == 'none' ? 0 : $data['delivery_charge'];
+        $data['charge_trigger'] = $data['apply_delivery_charge'] == 'none' ? 0 : $data['charge_trigger'];
+
+        return $data;
+    }
+
     protected function afterCreate(): void
     {
         $customer = $this->record;
