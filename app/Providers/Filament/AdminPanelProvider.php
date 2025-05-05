@@ -67,6 +67,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('5rem')
             ->brandLogo(asset('images/PRP-logo-Positive-120x40px.svg'))
             ->darkModeBrandLogo(asset('images/PRP-logo-Negative-120x40px.svg'))
+            ->favicon(asset('images/favicon.png'))
             ->sidebarCollapsibleOnDesktop()
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
