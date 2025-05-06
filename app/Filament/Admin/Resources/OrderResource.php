@@ -9,6 +9,7 @@ use App\Models\Product;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use App\Models\Customer;
+use App\Models\Discount;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\ProductItem;
@@ -175,7 +176,7 @@ class OrderResource extends Resource
                                                     ->options(function (Get $get) {
                                                         $productId = $get('product_id');
                                                         if ($productId) {
-                                                            return ProductItem::where('product_id', $productId)->pluck('size', 'id')->toArray();
+                                                            return ProductItem::where('product_id', $productId)->orderBy('size')->pluck('size', 'id')->toArray();
                                                         }
                                                         return [];
                                                     })
@@ -197,6 +198,7 @@ class OrderResource extends Resource
                                                             $product = Product::find($productId);
                                                             if ($product && $product->colour_list) {
                                                                 $colours = explode(';', $product->colour_list);
+                                                                sort($colours);
                                                                 return array_combine($colours, $colours);
                                                             }
                                                         }
@@ -238,16 +240,6 @@ class OrderResource extends Resource
                                                         return 'Total Quantity: ' . number_format($get('quantity')) . ' pieces';
                                                     })
                                                     ->columnSpan(1),
-                                                Placeholder::make('total')
-                                                    ->label('Total')
-                                                    ->inlineLabel()
-                                                    ->content(function (Get $get) {
-                                                        $productItem = ProductItem::find($get('product_item_id'));
-                                                        if ($productItem) {
-                                                            return '$' . number_format($get('total'), 2);
-                                                        }
-                                                        return '$0.00';
-                                                    }),
                                                 TextInput::make('special_instructions')
                                                     ->label('Instructions')
                                                     ->inlineLabel()
@@ -289,10 +281,6 @@ class OrderResource extends Resource
                                 ->afterStateHydrated(function (Get $get, Set $set) {
                                     self::updateTotals($get, $set);
                                 }),
-                            TextInput::make('purchase_order_no')
-                                ->columnSpan(2)
-                                ->label('Purchase Order No')
-                                ->required(),
                             Textarea::make('additional_instructions')
                                 ->columnSpan(2)
                                 ->label('Additional Instructions'),
@@ -393,7 +381,7 @@ class OrderResource extends Resource
             $totalItems = number_format($totalItems, 2);
             $set('total', $totalItems);
         } else {
-            $set('total', null);
+            $set('total', 0);
         }
     }
 
