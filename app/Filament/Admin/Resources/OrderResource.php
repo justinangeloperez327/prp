@@ -120,7 +120,23 @@ class OrderResource extends Resource
                                 ->displayFormat('d/m/Y')
                                 ->minDate(today())
                                 ->native(false)
-                                ->required(),
+                                ->required()
+                                ->closeOnDateSelection()
+                                ->disabledDates(function (): array {
+                                    // Get dates for the next 365 days
+                                    $dates = [];
+                                    $startDate = now();
+                                    $endDate = now()->addYear();
+
+                                    for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+                                        // Check if the day is Saturday (6) or Sunday (0)
+                                        if ($date->dayOfWeek === 0 || $date->dayOfWeek === 6) {
+                                            $dates[] = $date->format('Y-m-d');
+                                        }
+                                    }
+
+                                    return $dates;
+                                }),
                         ]),
 
                     Section::make('')
