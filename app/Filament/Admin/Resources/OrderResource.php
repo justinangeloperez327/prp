@@ -176,7 +176,12 @@ class OrderResource extends Resource
                                                     ->options(function (Get $get) {
                                                         $productId = $get('product_id');
                                                         if ($productId) {
-                                                            return ProductItem::where('product_id', $productId)->orderBy('size')->pluck('size', 'id')->toArray();
+                                                            $productItems = ProductItem::where('product_id', $productId)->orderBy('size')->orderBy('gsm')->get();
+
+                                                            return $productItems->mapWithKeys(function ($item) {
+                                                                $label = $item->size . ($item->gsm ? ' (' . $item->gsm . ' gsm)' : '');
+                                                                return [$item->id => $label];
+                                                            })->toArray();
                                                         }
                                                         return [];
                                                     })
@@ -217,7 +222,8 @@ class OrderResource extends Resource
                                                         $set('special_instructions', null);
                                                         $set('quantity', null);
                                                     })->columnSpan(1),
-                                            ]),
+                                            ])
+                                            ->extraAttributes(['class' => 'border-none']),
                                         Fieldset::make('')
                                             ->columns(1)
                                             ->schema([
@@ -240,14 +246,35 @@ class OrderResource extends Resource
                                                         return 'Total Quantity: ' . number_format($get('quantity')) . ' pieces';
                                                     })
                                                     ->columnSpan(1),
+                                                Placeholder::make('sheets_per_mill_pack')
+                                                    ->label('Sheets per pack')
+                                                    ->inlineLabel()
+                                                    ->content(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        if ($productItem?->sheets_per_mill_pack !== null) {
+                                                            return number_format($productItem->sheets_per_mill_pack) . ' pieces per pack';
+                                                        }
+                                                        return '';
+                                                    })
+                                                    ->columnSpan(1),
+                                                Placeholder::make('sheets_per_pallet')
+                                                    ->label('Sheets per pallet')
+                                                    ->inlineLabel()
+                                                    ->content(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        if ($productItem?->sheets_per_pallet !== null) {
+                                                            return number_format($productItem->sheets_per_pallet) . ' pieces per pallet';
+                                                        }
+                                                        return '';
+                                                    })
+                                                    ->columnSpan(1),
                                                 TextInput::make('special_instructions')
                                                     ->label('Instructions')
                                                     ->inlineLabel()
                                                     ->placeholder('Any special instructions for this item')
                                                     ->maxLength(255),
-                                            ]),
+                                            ])->extraAttributes(['class' => 'border-none']),
                                     ])
-                                    ->id('items')
                                 ])
                                 ->addAction(fn (Action $action) => $action->icon('heroicon-m-plus')->color('primary'))
                                 ->addActionLabel('Add Item')
@@ -256,8 +283,7 @@ class OrderResource extends Resource
                                 ->minItems(1)
                                 ->afterStateUpdated(function (Set $set, Get $get) {
                                     self::updateTotals($get, $set);
-                                })
-                                ->extraAttributes(['id' => 'order-items']),
+                                }),
                         ]),
                     Section::make('')
                         ->columns(4)
@@ -267,8 +293,7 @@ class OrderResource extends Resource
                                 ->columnSpan(2)
                                 ->numeric()
                                 ->live()
-                                ->prefix('$')
-                                ->readOnly(),
+                                ->prefix('$'),
                             TextInput::make('grand_total')
                                 ->label('Total (ex. GST)')
                                 ->columnSpan(2)
