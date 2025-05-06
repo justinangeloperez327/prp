@@ -40,8 +40,8 @@ class ProductCategoryResource extends Resource
                             ->label('Category Name')
                             ->columnSpan(1)
                             ->required(),
-                        Radio::make('status')
-                            ->label('Status')
+                        Radio::make('active')
+                            ->label('Active')
                             ->columnSpan(1)
                             ->default('active')
                             ->options([
@@ -69,6 +69,7 @@ class ProductCategoryResource extends Resource
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('status')
+                    ->badge()
                     ->sortable()
                     ->searchable(),
             ])
