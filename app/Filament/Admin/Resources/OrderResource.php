@@ -2,36 +2,37 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Enums\DeliveryChargeTypes;
-use App\Filament\Admin\Resources\OrderResource\Pages;
-use App\Models\Contact;
-use App\Models\Customer;
+use Filament\Tables;
 use App\Models\Order;
+use App\Models\Contact;
 use App\Models\Product;
-use App\Models\ProductCategory;
-use App\Models\ProductItem;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Split;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\TimePicker;
-use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
+use App\Models\Customer;
+use App\Models\Discount;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\ProductItem;
+use App\Models\ProductCategory;
+use Filament\Resources\Resource;
+use App\Enums\DeliveryChargeTypes;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Split;
 use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TimePicker;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Actions\Action;
+use App\Filament\Admin\Resources\OrderResource\Pages;
 
 class OrderResource extends Resource
 {
@@ -357,7 +358,7 @@ class OrderResource extends Resource
                                 ->numeric()
                                 ->prefix('$')
                                 ->live(debounce: 1000)
-                                ->readOnly()
+                                ->readOnly(fn () => Auth::user()->hasRole('customer'))
                                 ->afterStateHydrated(function (Get $get, Set $set) {
                                     self::updateTotals($get, $set);
                                 }),
@@ -442,7 +443,7 @@ class OrderResource extends Resource
             ->defaultPaginationPageOption(5)
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
             ]);
     }
 
@@ -484,9 +485,25 @@ class OrderResource extends Resource
 
         $selectedItems = collect($get('items'))->filter(fn ($item) => ! empty($item['product_item_id']) && ! empty($item['quantity']));
         $prices = ProductItem::whereIn('id', $selectedItems->pluck('product_item_id'))->pluck('price_per_quantity', 'id');
+        $discounts = Discount::whereIn('product_id', $selectedItems->pluck('product_id'))
+            ->where('customer_id', $get('customer_id'))
+            ->where('status', 'active')
+            ->pluck('discount', 'product_id');
 
-        $subTotal = $selectedItems->sum(function ($item) use ($prices) {
-            return ($item['quantity'] * $prices[$item['product_item_id']]) / 1000;
+        $discounts = $discounts->map(function ($discount) {
+            return $discount * 100; // Convert to percentage
+        });
+
+        $subTotal = $selectedItems->sum(function ($item) use ($prices, $discounts) {
+            $price = $prices[$item['product_item_id']] ?? 0;
+            $quantity = $item['quantity'];
+            $productId = $item['product_id'] ?? null;
+            $discount = $discounts[$productId] ?? 0;
+
+            $itemTotal = ($quantity * $price) / 1000;
+            $discountedTotal = $itemTotal * (1 - ($discount / 100));
+
+            return $discountedTotal;
         });
 
         $grandTotal = $subTotal;
