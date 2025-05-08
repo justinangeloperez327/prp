@@ -2,37 +2,36 @@
 
 namespace App\Filament\Admin\Resources;
 
-use Filament\Tables;
-use App\Models\Order;
+use App\Enums\DeliveryChargeTypes;
+use App\Filament\Admin\Resources\OrderResource\Pages;
 use App\Models\Contact;
+use App\Models\Customer;
+use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\ProductItem;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Split;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TimePicker;
+use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use App\Models\Customer;
-use App\Models\Discount;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use App\Models\ProductItem;
-use App\Models\ProductCategory;
 use Filament\Resources\Resource;
-use App\Enums\DeliveryChargeTypes;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Split;
-use Illuminate\Support\Facades\Auth;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
+use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\TimePicker;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Actions\Action;
-use App\Filament\Admin\Resources\OrderResource\Pages;
+use Illuminate\Support\Facades\Auth;
 
 class OrderResource extends Resource
 {
@@ -171,6 +170,7 @@ class OrderResource extends Resource
                                                         if ($productCategoryId) {
                                                             return Product::where('product_category_id', $productCategoryId)->pluck('name', 'id')->toArray();
                                                         }
+
                                                         return [];
                                                     })
                                                     ->disabled(fn (Get $get) => ! $get('product_category_id'))
@@ -193,10 +193,12 @@ class OrderResource extends Resource
                                                             $productItems = ProductItem::where('product_id', $productId)->orderBy('size')->orderBy('gsm')->get();
 
                                                             return $productItems->mapWithKeys(function ($item) {
-                                                                $label = $item->size . ($item->gsm ? ' (' . $item->gsm . ' gsm)' : '');
+                                                                $label = $item->size.($item->gsm ? ' ('.$item->gsm.' gsm)' : '');
+
                                                                 return [$item->id => $label];
                                                             })->toArray();
                                                         }
+
                                                         return [];
                                                     })
                                                     ->label('Size')
@@ -218,9 +220,11 @@ class OrderResource extends Resource
                                                             if ($product && $product->colour_list) {
                                                                 $colours = explode(';', $product->colour_list);
                                                                 sort($colours);
+
                                                                 return array_combine($colours, $colours);
                                                             }
                                                         }
+
                                                         return [];
                                                     })
                                                     ->label('Colour')
@@ -252,12 +256,13 @@ class OrderResource extends Resource
                                                     ->disabled(fn (Get $get) => ! $get('product_item_id'))
                                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                                         self::updateTotalPerItem($get, $set);
-                                                    })->helperText(function(Get $get) {
+                                                    })->helperText(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
                                                         if ($productItem?->sheets_per_mill_pack !== null) {
-                                                            return number_format($productItem->sheets_per_mill_pack) . ' pieces per pack * ' . $get('quantity') . ' quantity = ' . number_format(($productItem->sheets_per_mill_pack * $get('quantity'))) . ' pieces';
+                                                            return number_format($productItem->sheets_per_mill_pack).' pieces per pack * '.$get('quantity').' quantity = '.number_format(($productItem->sheets_per_mill_pack * $get('quantity'))).' pieces';
                                                         }
-                                                        return 'Total Quantity: ' . number_format($get('quantity')) . ' pieces';
+
+                                                        return 'Total Quantity: '.number_format($get('quantity')).' pieces';
                                                     })
                                                     ->columnSpan(1),
                                                 Placeholder::make('sheets_per_mill_pack')
@@ -266,8 +271,9 @@ class OrderResource extends Resource
                                                     ->content(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
                                                         if ($productItem?->sheets_per_mill_pack !== null) {
-                                                            return number_format($productItem->sheets_per_mill_pack) . ' pieces per pack';
+                                                            return number_format($productItem->sheets_per_mill_pack).' pieces per pack';
                                                         }
+
                                                         return '';
                                                     })
                                                     ->columnSpan(1),
@@ -277,8 +283,9 @@ class OrderResource extends Resource
                                                     ->content(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
                                                         if ($productItem?->sheets_per_pallet !== null) {
-                                                            return number_format($productItem->sheets_per_pallet) . ' pieces per pallet';
+                                                            return number_format($productItem->sheets_per_pallet).' pieces per pallet';
                                                         }
+
                                                         return '';
                                                     })
                                                     ->columnSpan(1),
@@ -288,7 +295,7 @@ class OrderResource extends Resource
                                                     ->placeholder('Any special instructions for this item')
                                                     ->maxLength(255),
                                             ])->extraAttributes(['class' => 'border-none']),
-                                    ])
+                                    ]),
                                 ])
                                 ->addAction(fn (Action $action) => $action->icon('heroicon-m-plus')->color('primary'))
                                 ->addActionLabel('Add Item')

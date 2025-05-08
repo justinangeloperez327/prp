@@ -17,6 +17,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerResource extends Resource
 {
@@ -142,6 +143,7 @@ class CustomerResource extends Resource
                             ->prefixIcon('heroicon-s-currency-dollar'),
                     ]),
                 Section::make('Notes')
+                    ->hidden(fn () => Auth::user()->hasRole('customer'))
                     ->schema([
                         Textarea::make('notes')
                             ->label(''),

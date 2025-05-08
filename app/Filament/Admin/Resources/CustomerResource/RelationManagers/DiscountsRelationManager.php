@@ -7,8 +7,6 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class DiscountsRelationManager extends RelationManager
 {
@@ -19,11 +17,11 @@ class DiscountsRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('product_id')
-                ->relationship('product', 'name')
-                ->required()
-                ->searchable()
-                ->preload()
-                ->placeholder('Select Product'),
+                    ->relationship('product', 'name')
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Select Product'),
                 Forms\Components\TextInput::make('discount')
                     ->required()
                     ->maxLength(255),

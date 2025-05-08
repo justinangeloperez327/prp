@@ -2,12 +2,11 @@
 
 namespace App\Filament\Admin\Resources\OrderResource\Pages;
 
-use App\Models\Order;
-use App\Models\ProductItem;
 use App\Events\OrderCreated;
-use Illuminate\Support\Facades\Auth;
-use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Admin\Resources\OrderResource;
+use App\Models\Order;
+use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Auth;
 
 class CreateOrder extends CreateRecord
 {
@@ -29,32 +28,6 @@ class CreateOrder extends CreateRecord
         $data['delivery_charge'] = $data['applied_delivery_charge'];
 
         return $data;
-    }
-
-    protected function handleRecordCreation(array $data): Order
-    {
-        $order = static::getModel()::create($data);
-
-        $itemsData = $this->form->getRawState()['items'] ?? [];
-
-        foreach ($itemsData as $item) {
-            $items[] = [
-                'order_id' => $order->id,
-                'product_category_id' => $item['product_category_id'],
-                'product_id' => $item['product_id'],
-                'product_item_id' => $item['product_item_id'],
-                'product_colour' => $item['product_colour'],
-                'quantity' => $item['quantity'],
-                'total' => $item['total'],
-                'special_instructions' => $item['special_instructions'],
-            ];
-        }
-
-        if (isset($items)) {
-            $order->items()->createMany($items);
-        }
-
-        return $order;
     }
 
     protected function afterCreate(): void
