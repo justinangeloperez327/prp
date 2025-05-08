@@ -265,6 +265,18 @@ class OrderResource extends Resource
                                                         return 'Total Quantity: '.number_format($get('quantity')).' pieces';
                                                     })
                                                     ->columnSpan(1),
+                                                Placeholder::make('price_per_quantity')
+                                                    ->label('Price per quantity')
+                                                    ->inlineLabel()
+                                                    ->content(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        if ($productItem?->price_per_quantity !== null) {
+                                                            return '$'.number_format($productItem->price_per_quantity, 2);
+                                                        }
+
+                                                        return '';
+                                                    })
+                                                    ->columnSpan(1),
                                                 Placeholder::make('sheets_per_mill_pack')
                                                     ->label('Sheets per pack')
                                                     ->inlineLabel()
