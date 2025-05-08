@@ -246,23 +246,45 @@ class OrderResource extends Resource
                                             ->columns(1)
                                             ->schema([
                                                 TextInput::make('quantity')
-                                                    ->label('Quantity')
+                                                    ->label('Quantity (Sheets)')
                                                     ->inlineLabel()
                                                     ->numeric()
                                                     ->required()
                                                     ->live(debounce: 1000)
-                                                    ->minValue(1)
                                                     ->step(1)
                                                     ->disabled(fn (Get $get) => ! $get('product_item_id'))
                                                     ->afterStateUpdated(function (Get $get, Set $set) {
                                                         self::updateTotalPerItem($get, $set);
-                                                    })->helperText(function (Get $get) {
-                                                        $productItem = ProductItem::find($get('product_item_id'));
-                                                        if ($productItem?->sheets_per_mill_pack !== null) {
-                                                            return number_format($productItem->sheets_per_mill_pack).' pieces per pack * '.$get('quantity').' quantity = '.number_format(($productItem->sheets_per_mill_pack * $get('quantity'))).' pieces';
+                                                    })
+                                                    ->minValue(function (Get $get) {
+                                                        $productItemId = $get('product_item_id');
+                                                        if ($productItemId) {
+                                                            $productItem = ProductItem::find($productItemId);
+                                                            if ($productItem && $productItem->sheets_per_mill_pack > 0) {
+                                                                return $productItem->sheets_per_mill_pack;
+                                                            }
                                                         }
-
-                                                        return 'Total Quantity: '.number_format($get('quantity')).' pieces';
+                                                        return 1;
+                                                    })
+                                                    ->step(function (Get $get) {
+                                                        $productItemId = $get('product_item_id');
+                                                        if ($productItemId) {
+                                                            $productItem = ProductItem::find($productItemId);
+                                                            if ($productItem && $productItem->sheets_per_mill_pack > 0) {
+                                                                return $productItem->sheets_per_mill_pack;
+                                                            }
+                                                        }
+                                                        return 1;
+                                                    })
+                                                    ->helperText(function (Get $get) {
+                                                        $productItemId = $get('product_item_id');
+                                                        if ($productItemId) {
+                                                            $productItem = ProductItem::find($productItemId);
+                                                            if ($productItem && $productItem->sheets_per_mill_pack > 0) {
+                                                                return "Minimum quantity: " . number_format($productItem->sheets_per_mill_pack) . " sheets";
+                                                            }
+                                                        }
+                                                        return "";
                                                     })
                                                     ->columnSpan(1),
                                                 Placeholder::make('price_per_quantity')
@@ -271,7 +293,7 @@ class OrderResource extends Resource
                                                     ->content(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
                                                         if ($productItem?->price_per_quantity !== null) {
-                                                            return '$'.number_format($productItem->price_per_quantity, 2);
+                                                            return '$'.number_format($productItem->price_per_quantity/1000, 2);
                                                         }
 
                                                         return '';
