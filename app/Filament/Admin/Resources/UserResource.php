@@ -35,7 +35,7 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('email')
                     ->label('Email')
                     ->required()
-                    ->unique('users', 'email')
+                    ->unique('users', 'email', ignoreRecord: true)
                     ->placeholder('Enter the Email Address'),
                 Forms\Components\CheckboxList::make('roles')
                     ->relationship('roles', 'name')
