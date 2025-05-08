@@ -342,6 +342,11 @@ class OrderResource extends Resource
                             Textarea::make('additional_instructions')
                                 ->columnSpan(2)
                                 ->label('Additional Instructions'),
+                            TextArea::make('internal_notes')
+                                ->label('Internal Notes')
+                                ->hidden(fn () => Auth::user()->hasRole('customer'))
+                                ->columnSpan(2)
+                                ->placeholder('Internal notes for this order'),
                         ]),
 
                 ]),
