@@ -127,11 +127,11 @@ class ProductItemResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('size')
-                    ->sortable()
-                    ->searchable(),
                 TextColumn::make('product.name')
                     ->label('Product')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('size')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('gsm')
