@@ -56,11 +56,9 @@ class ContactResource extends Resource
                             ->label('Email')
                             ->email()
                             ->required(),
-
                         TextInput::make('direct_phone')
                             ->label('Phone Number')
                             ->required(),
-
                         TextInput::make('mobile_phone')
                             ->label('Mobile Number'),
                     ]),
