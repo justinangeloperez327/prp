@@ -121,7 +121,23 @@ class ContactsRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->mutateFormDataUsing(function (array $data, Contact $record) {
+                        if (isset($data['password']) && filled($data['password'])) {
+                            $user = User::find($record->user_id);
+                            if ($user) {
+                                $user->update([
+                                    'password' => Hash::make($data['password']),
+                                ]);
+                            }
+                        }
+
+                        if (isset($data['password'])) {
+                            unset($data['password']);
+                        }
+
+                        return $data;
+                    }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
