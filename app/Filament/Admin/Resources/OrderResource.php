@@ -163,7 +163,7 @@ class OrderResource extends Resource
                                                         $set('product_colour', null);
                                                         $set('special_instructions', null);
                                                         $set('quantity', null);
-                                                    })->columnSpan(1),
+                                                    }),
                                                 Select::make('product_id')
                                                     ->inlineLabel()
                                                     ->options(function (Get $get) {
@@ -184,14 +184,14 @@ class OrderResource extends Resource
                                                         $set('product_item_id', null);
                                                         $set('product_colour', null);
                                                         $set('special_instructions', null);
-                                                        $set('quantity', null);
-                                                    })->columnSpan(1),
+                                                        $set('quantity', 0);
+                                                    }),
                                                 Select::make('product_item_id')
                                                     ->inlineLabel()
                                                     ->options(function (Get $get) {
                                                         $productId = $get('product_id');
                                                         if ($productId) {
-                                                            $productItems = ProductItem::where('product_id', $productId)->orderBy('size')->orderBy('gsm')->get();
+                                                            $productItems = ProductItem::where('product_id', $productId)->orderBy('gsm')->orderBy('size')->get();
 
                                                             return $productItems->mapWithKeys(function ($item) {
                                                                 $label = $item->size.($item->gsm ? ' ('.$item->gsm.' gsm)' : '');
@@ -199,7 +199,6 @@ class OrderResource extends Resource
                                                                 return [$item->id => $label];
                                                             })->toArray();
                                                         }
-
                                                         return [];
                                                     })
                                                     ->label('Size')
@@ -208,10 +207,19 @@ class OrderResource extends Resource
                                                     ->required()
                                                     ->disabled(fn (Get $get) => ! $get('product_id'))
                                                     ->live()
-                                                    ->afterStateUpdated(function (Set $set) {
+                                                    ->afterStateUpdated(function (Set $set, Get $get) {
                                                         $set('special_instructions', null);
-                                                        $set('quantity', null);
-                                                    })->columnSpan(1),
+                                                        $quantity = 1;
+                                                        $productItemId = $get('product_item_id');
+                                                        if ($productItemId) {
+                                                            $productItem = ProductItem::find($productItemId);
+                                                            if ($productItem && $productItem->sheets_per_mill_pack > 0) {
+                                                                $quantity = $productItem->sheets_per_mill_pack;
+                                                            }
+                                                        }
+                                                        $set('quantity', $quantity);
+                                                        self::updateTotalPerItem($get, $set);
+                                                    }),
                                                 Select::make('product_colour')
                                                     ->inlineLabel()
                                                     ->options(function (Get $get) {
@@ -221,26 +229,21 @@ class OrderResource extends Resource
                                                             if ($product && $product->colour_list) {
                                                                 $colours = explode(';', $product->colour_list);
                                                                 sort($colours);
-
                                                                 return array_combine($colours, $colours);
                                                             }
                                                         }
-
                                                         return [];
                                                     })
                                                     ->label('Colour')
                                                     ->placeholder('Select a colour')
                                                     ->searchable()
                                                     ->required()
-                                                    ->disabled(fn (Get $get) => ! $get('product_id') || ! Product::find($get('product_id'))?->colour_list)
-                                                    ->live()
-                                                    ->afterStateUpdated(function (Set $set, $state) {
-                                                        if (! $state) {
-                                                            $set('product_colour', null);
-                                                        }
-                                                        $set('special_instructions', null);
-                                                        $set('quantity', null);
-                                                    })->columnSpan(1),
+                                                    ->disabled(fn (Get $get) => ! $get('product_id') || ! Product::find($get('product_id'))?->colour_list),
+                                                Textarea::make('special_instructions')
+                                                    ->label('Instructions')
+                                                    ->inlineLabel()
+                                                    ->placeholder('Any special instructions for this item')
+                                                    ->maxLength(255),
                                             ])
                                             ->extraAttributes(['class' => 'border-none']),
                                         Fieldset::make('')
@@ -251,7 +254,7 @@ class OrderResource extends Resource
                                                     ->inlineLabel()
                                                     ->numeric()
                                                     ->required()
-                                                    ->live(debounce: 1000)
+                                                    ->live()
                                                     ->step(1)
                                                     ->disabled(fn (Get $get) => ! $get('product_item_id'))
                                                     ->afterStateUpdated(function (Get $get, Set $set) {
@@ -286,49 +289,96 @@ class OrderResource extends Resource
                                                             }
                                                         }
                                                         return "";
-                                                    })
-                                                    ->columnSpan(1),
-                                                Placeholder::make('price_per_quantity')
-                                                    ->label('Price per quantity')
+                                                    }),
+
+                                                Placeholder::make('')
+                                                    ->label('Box per Pack')
                                                     ->inlineLabel()
+                                                    ->visible(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        return $productItem?->unit === 'Box';
+                                                    })
+                                                    ->content(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        if ($productItem?->quantity !== null) {
+                                                            return $productItem->quantity;
+                                                        }
+
+                                                        return 1;
+                                                    }),
+                                                Placeholder::make('')
+                                                    ->label('Price per each')
+                                                    ->inlineLabel()
+                                                    ->visible(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        return $productItem?->unit === 'Box';
+                                                    })
                                                     ->content(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
                                                         if ($productItem?->price_per_quantity !== null) {
-                                                            return '$'.number_format($productItem->price_per_quantity/1000, 2);
+                                                            return '$'.number_format($productItem->price_per_quantity);
                                                         }
 
-                                                        return '';
-                                                    })
-                                                    ->columnSpan(1),
-                                                Placeholder::make('sheets_per_mill_pack')
-                                                    ->label('Sheets per pack')
+                                                        return '$0.00';
+                                                    }),
+                                                // Sheets
+                                                Placeholder::make('')
+                                                    ->label('Sheets per Pack')
                                                     ->inlineLabel()
+                                                    ->visible(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        return $productItem?->unit === 'Sheets';
+                                                    })
                                                     ->content(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
                                                         if ($productItem?->sheets_per_mill_pack !== null) {
-                                                            return number_format($productItem->sheets_per_mill_pack).' pieces per pack';
+                                                            return $productItem->sheets_per_mill_pack;
                                                         }
 
+                                                        return '1';
+                                                    }),
+                                                Placeholder::make('')
+                                                    ->label(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        if ($productItem?->quantity > 0) {
+                                                            return 'Sheets per '. $productItem->quantity . ' sheets (qty less than 2 packs)';
+                                                        }
                                                         return '';
                                                     })
-                                                    ->columnSpan(1),
-                                                Placeholder::make('sheets_per_pallet')
-                                                    ->label('Sheets per pallet')
                                                     ->inlineLabel()
+                                                    ->visible(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        return $productItem?->unit === 'Sheets';
+                                                    })
                                                     ->content(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
-                                                        if ($productItem?->sheets_per_pallet !== null) {
-                                                            return number_format($productItem->sheets_per_pallet).' pieces per pallet';
+                                                        if ($productItem?->sheets_per_mill_pack !== null) {
+                                                            return '$'.number_format($productItem->price_broken_mill_pack);
                                                         }
 
+                                                        return '$0.00';
+                                                    }),
+                                                Placeholder::make('')
+                                                    ->label(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        if ($productItem?->quantity > 0) {
+                                                            return 'Sheets per '. $productItem->quantity . ' sheets (qty 2 packs or more)';
+                                                        }
                                                         return '';
                                                     })
-                                                    ->columnSpan(1),
-                                                TextInput::make('special_instructions')
-                                                    ->label('Instructions')
                                                     ->inlineLabel()
-                                                    ->placeholder('Any special instructions for this item')
-                                                    ->maxLength(255),
+                                                    ->visible(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        return $productItem?->unit === 'Sheets';
+                                                    })
+                                                    ->content(function (Get $get) {
+                                                        $productItem = ProductItem::find($get('product_item_id'));
+                                                        if ($productItem?->sheets_per_mill_pack !== null) {
+                                                            return '$'.number_format($productItem->price_per_quantity);
+                                                        }
+
+                                                        return '$0.00';
+                                                    }),
                                             ])->extraAttributes(['class' => 'border-none']),
                                     ]),
                                 ])
@@ -349,6 +399,10 @@ class OrderResource extends Resource
                                 ->columnSpan(2)
                                 ->numeric()
                                 ->live()
+                                ->readOnly(fn () => Auth::user()->hasRole('customer'))
+                                ->afterStateHydrated(function (Get $get, Set $set) {
+                                    self::updateTotals($get, $set);
+                                })
                                 ->prefix('$'),
                             TextInput::make('grand_total')
                                 ->label('Total (ex. GST)')
@@ -356,11 +410,23 @@ class OrderResource extends Resource
                                 ->inputMode('decimal')
                                 ->step('0.01')
                                 ->numeric()
+                                ->hidden()
                                 ->prefix('$')
                                 ->live(debounce: 1000)
-                                ->readOnly(fn () => Auth::user()->hasRole('customer'))
                                 ->afterStateHydrated(function (Get $get, Set $set) {
                                     self::updateTotals($get, $set);
+                                }),
+                            Placeholder::make('grand_total')
+                                ->label('Total (ex. GST)')
+                                ->columnSpan(2)
+                                ->live(debounce: 2000)
+                                ->content(function (Get $get) {
+                                    $grandTotal = $get('grand_total');
+
+                                    if ($grandTotal !== null) {
+                                        return '$'.$grandTotal;
+                                    }
+                                    return '$0.00';
                                 }),
                             Textarea::make('additional_instructions')
                                 ->columnSpan(2)
