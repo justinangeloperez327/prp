@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\CustomerResource\Pages;
 
+use App\Events\CustomerCreated;
 use App\Filament\Admin\Resources\CustomerResource;
 use App\Models\Customer;
 use Filament\Resources\Pages\CreateRecord;
@@ -27,5 +28,7 @@ class CreateCustomer extends CreateRecord
         $customer->update([
             'customer_code' => $customerCode,
         ]);
+
+        CustomerCreated::dispatch($customer);
     }
 }

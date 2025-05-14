@@ -2,37 +2,37 @@
 
 namespace App\Filament\Admin\Resources;
 
-use Filament\Tables;
-use App\Models\Order;
+use App\Enums\DeliveryChargeTypes;
+use App\Filament\Admin\Resources\OrderResource\Pages;
 use App\Models\Contact;
-use App\Models\Product;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use App\Models\Customer;
 use App\Models\Discount;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
-use App\Models\ProductItem;
+use App\Models\Order;
+use App\Models\Product;
 use App\Models\ProductCategory;
-use Filament\Resources\Resource;
-use App\Enums\DeliveryChargeTypes;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Split;
-use Illuminate\Support\Facades\Auth;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\TimePicker;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\Placeholder;
+use App\Models\ProductItem;
 use Filament\Forms\Components\Actions\Action;
-use App\Filament\Admin\Resources\OrderResource\Pages;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Split;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TimePicker;
+use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class OrderResource extends Resource
 {
@@ -199,6 +199,7 @@ class OrderResource extends Resource
                                                                 return [$item->id => $label];
                                                             })->toArray();
                                                         }
+
                                                         return [];
                                                     })
                                                     ->label('Size')
@@ -229,9 +230,11 @@ class OrderResource extends Resource
                                                             if ($product && $product->colour_list) {
                                                                 $colours = explode(';', $product->colour_list);
                                                                 sort($colours);
+
                                                                 return array_combine($colours, $colours);
                                                             }
                                                         }
+
                                                         return [];
                                                     })
                                                     ->label('Colour')
@@ -268,6 +271,7 @@ class OrderResource extends Resource
                                                                 return $productItem->sheets_per_mill_pack;
                                                             }
                                                         }
+
                                                         return 1;
                                                     })
                                                     ->step(function (Get $get) {
@@ -278,6 +282,7 @@ class OrderResource extends Resource
                                                                 return $productItem->sheets_per_mill_pack;
                                                             }
                                                         }
+
                                                         return 1;
                                                     })
                                                     ->helperText(function (Get $get) {
@@ -285,10 +290,11 @@ class OrderResource extends Resource
                                                         if ($productItemId) {
                                                             $productItem = ProductItem::find($productItemId);
                                                             if ($productItem && $productItem->sheets_per_mill_pack > 0) {
-                                                                return "Minimum quantity: " . number_format($productItem->sheets_per_mill_pack) . " sheets";
+                                                                return 'Minimum quantity: '.number_format($productItem->sheets_per_mill_pack).' sheets';
                                                             }
                                                         }
-                                                        return "";
+
+                                                        return '';
                                                     }),
 
                                                 Placeholder::make('')
@@ -296,6 +302,7 @@ class OrderResource extends Resource
                                                     ->inlineLabel()
                                                     ->visible(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
+
                                                         return $productItem?->unit === 'Box';
                                                     })
                                                     ->content(function (Get $get) {
@@ -311,6 +318,7 @@ class OrderResource extends Resource
                                                     ->inlineLabel()
                                                     ->visible(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
+
                                                         return $productItem?->unit === 'Box';
                                                     })
                                                     ->content(function (Get $get) {
@@ -327,6 +335,7 @@ class OrderResource extends Resource
                                                     ->inlineLabel()
                                                     ->visible(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
+
                                                         return $productItem?->unit === 'Sheets';
                                                     })
                                                     ->content(function (Get $get) {
@@ -341,13 +350,15 @@ class OrderResource extends Resource
                                                     ->label(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
                                                         if ($productItem?->quantity > 0) {
-                                                            return 'Sheets per '. $productItem->quantity . ' sheets (qty less than 2 packs)';
+                                                            return 'Sheets per '.$productItem->quantity.' sheets (qty less than 2 packs)';
                                                         }
+
                                                         return '';
                                                     })
                                                     ->inlineLabel()
                                                     ->visible(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
+
                                                         return $productItem?->unit === 'Sheets';
                                                     })
                                                     ->content(function (Get $get) {
@@ -362,13 +373,15 @@ class OrderResource extends Resource
                                                     ->label(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
                                                         if ($productItem?->quantity > 0) {
-                                                            return 'Sheets per '. $productItem->quantity . ' sheets (qty 2 packs or more)';
+                                                            return 'Sheets per '.$productItem->quantity.' sheets (qty 2 packs or more)';
                                                         }
+
                                                         return '';
                                                     })
                                                     ->inlineLabel()
                                                     ->visible(function (Get $get) {
                                                         $productItem = ProductItem::find($get('product_item_id'));
+
                                                         return $productItem?->unit === 'Sheets';
                                                     })
                                                     ->content(function (Get $get) {
@@ -426,6 +439,7 @@ class OrderResource extends Resource
                                     if ($grandTotal !== null) {
                                         return '$'.$grandTotal;
                                     }
+
                                     return '$0.00';
                                 }),
                             Textarea::make('additional_instructions')
@@ -509,7 +523,7 @@ class OrderResource extends Resource
             ->defaultPaginationPageOption(5)
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make()
+                Tables\Actions\EditAction::make(),
             ]);
     }
 
