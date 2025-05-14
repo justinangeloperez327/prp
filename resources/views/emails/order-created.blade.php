@@ -1,320 +1,320 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <style>
         /* Base */
 
-body,
-body *:not(html):not(style):not(br):not(tr):not(code) {
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-    position: relative;
-}
+        body,
+        body *:not(html):not(style):not(br):not(tr):not(code) {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+                'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+            position: relative;
+        }
 
-body {
-    -webkit-text-size-adjust: none;
-    background-color: #ffffff;
-    color: #718096;
-    height: 100%;
-    line-height: 1.4;
-    margin: 0;
-    padding: 0;
-    width: 100% !important;
-}
+        body {
+            -webkit-text-size-adjust: none;
+            background-color: #ffffff;
+            color: #718096;
+            height: 100%;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+        }
 
-p,
-ul,
-ol,
-blockquote {
-    line-height: 1.4;
-    text-align: left;
-}
+        p,
+        ul,
+        ol,
+        blockquote {
+            line-height: 1.4;
+            text-align: left;
+        }
 
-a {
-    color: #3869d4;
-}
+        a {
+            color: #3869d4;
+        }
 
-a img {
-    border: none;
-}
+        a img {
+            border: none;
+        }
 
-/* Typography */
+        /* Typography */
 
-h1 {
-    color: #3d4852;
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 0;
-    text-align: left;
-}
+        h1 {
+            color: #3d4852;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 0;
+            text-align: left;
+        }
 
-h2 {
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 0;
-    text-align: left;
-}
+        h2 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 0;
+            text-align: left;
+        }
 
-h3 {
-    font-size: 14px;
-    font-weight: bold;
-    margin-top: 0;
-    text-align: left;
-}
+        h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 0;
+            text-align: left;
+        }
 
-p {
-    font-size: 16px;
-    line-height: 1.5em;
-    margin-top: 0;
-    text-align: left;
-}
+        p {
+            font-size: 16px;
+            line-height: 1.5em;
+            margin-top: 0;
+            text-align: left;
+        }
 
-p.sub {
-    font-size: 12px;
-}
+        p.sub {
+            font-size: 12px;
+        }
 
-img {
-    max-width: 100%;
-}
+        img {
+            max-width: 100%;
+        }
 
-/* Layout */
+        /* Layout */
 
-.wrapper {
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-    -premailer-width: 100%;
-    background-color: #edf2f7;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-}
+        .wrapper {
+            -premailer-cellpadding: 0;
+            -premailer-cellspacing: 0;
+            -premailer-width: 100%;
+            background-color: #edf2f7;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
 
-.content {
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-    -premailer-width: 100%;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-}
+        .content {
+            -premailer-cellpadding: 0;
+            -premailer-cellspacing: 0;
+            -premailer-width: 100%;
+            margin: 0;
+            padding: 4rem;
+            width: 100%;
+        }
 
-/* Header */
+        /* Header */
 
-.header {
-    padding: 25px 0;
-    text-align: center;
-}
+        .header {
+            text-align: center;
+        }
 
-.header a {
-    color: #3d4852;
-    font-size: 19px;
-    font-weight: bold;
-    text-decoration: none;
-}
+        .header a {
+            color: #3d4852;
+            font-size: 19px;
+            font-weight: bold;
+            text-decoration: none;
+        }
 
-/* Logo */
+        /* Logo */
 
-.logo {
-    height: 75px;
-    max-height: 75px;
-    width: 75px;
-}
+        .logo {
+            height: 75px;
+            max-height: 75px;
+            width: 75px;
+        }
 
-/* Body */
+        /* Body */
 
-.body {
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-    -premailer-width: 100%;
-    background-color: #edf2f7;
-    border-bottom: 1px solid #edf2f7;
-    border-top: 1px solid #edf2f7;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-}
+        .body {
+            -premailer-cellpadding: 0;
+            -premailer-cellspacing: 0;
+            -premailer-width: 100%;
+            background-color: #edf2f7;
+            border-bottom: 1px solid #edf2f7;
+            border-top: 1px solid #edf2f7;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
 
-.inner-body {
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-    -premailer-width: 570px;
-    background-color: #ffffff;
-    border-color: #e8e5ef;
-    border-radius: 2px;
-    border-width: 1px;
-    box-shadow: 0 2px 0 rgba(0, 0, 150, 0.025), 2px 4px 0 rgba(0, 0, 150, 0.015);
-    margin: 0 auto;
-    padding: 0;
-    width: 570px;
-}
+        .inner-body {
+            -premailer-cellpadding: 0;
+            -premailer-cellspacing: 0;
+            -premailer-width: 570px;
+            background-color: #ffffff;
+            border-color: #e8e5ef;
+            border-radius: 2px;
+            border-width: 1px;
+            box-shadow: 0 2px 0 rgba(0, 0, 150, 0.025), 2px 4px 0 rgba(0, 0, 150, 0.015);
+            margin: 0 auto;
+            padding: 0;
+            width: 570px;
+        }
 
-.inner-body a {
-    word-break: break-all;
-}
+        .inner-body a {
+            word-break: break-all;
+        }
 
-/* Subcopy */
+        /* Subcopy */
 
-.subcopy {
-    border-top: 1px solid #e8e5ef;
-    margin-top: 25px;
-    padding-top: 25px;
-}
+        .subcopy {
+            border-top: 1px solid #e8e5ef;
+            margin-top: 25px;
+            padding-top: 25px;
+        }
 
-.subcopy p {
-    font-size: 14px;
-}
+        .subcopy p {
+            font-size: 14px;
+        }
 
-/* Footer */
+        /* Footer */
 
-.footer {
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-    -premailer-width: 570px;
-    margin: 0 auto;
-    padding: 0;
-    text-align: center;
-    width: 570px;
-}
+        .footer {
+            -premailer-cellpadding: 0;
+            -premailer-cellspacing: 0;
+            -premailer-width: 570px;
+            margin: 0 auto;
+            padding: 0;
+            text-align: center;
+            width: 570px;
+        }
 
-.footer p {
-    color: #b0adc5;
-    font-size: 12px;
-    text-align: center;
-}
+        .footer p {
+            color: #b0adc5;
+            font-size: 12px;
+            text-align: center;
+        }
 
-.footer a {
-    color: #b0adc5;
-    text-decoration: underline;
-}
+        .footer a {
+            color: #b0adc5;
+            text-decoration: underline;
+        }
 
-/* Tables */
+        /* Tables */
 
-.table table {
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-    -premailer-width: 100%;
-    margin: 30px auto;
-    width: 100%;
-}
+        .table table {
+            -premailer-cellpadding: 0;
+            -premailer-cellspacing: 0;
+            -premailer-width: 100%;
+            margin: 30px auto;
+            width: 100%;
+        }
 
-.table th {
-    border-bottom: 1px solid #edeff2;
-    margin: 0;
-    padding-bottom: 8px;
-}
+        .table th {
+            border-bottom: 1px solid #edeff2;
+            margin: 0;
+            padding-bottom: 8px;
+        }
 
-.table td {
-    color: #74787e;
-    font-size: 15px;
-    line-height: 18px;
-    margin: 0;
-    padding: 10px 0;
-}
+        .table td {
+            color: #74787e;
+            font-size: 15px;
+            line-height: 18px;
+            margin: 0;
+            padding: 10px 0;
+        }
 
-.content-cell {
-    max-width: 100vw;
-    padding: 32px;
-}
+        .content-cell {
+            max-width: 100vw;
+            padding: 32px;
+        }
 
-/* Buttons */
+        /* Buttons */
 
-.action {
-    -premailer-cellpadding: 0;
-    -premailer-cellspacing: 0;
-    -premailer-width: 100%;
-    margin: 30px auto;
-    padding: 0;
-    text-align: center;
-    width: 100%;
-    float: unset;
-}
+        .action {
+            -premailer-cellpadding: 0;
+            -premailer-cellspacing: 0;
+            -premailer-width: 100%;
+            margin: 30px auto;
+            padding: 0;
+            text-align: center;
+            width: 100%;
+            float: unset;
+        }
 
-.button {
-    -webkit-text-size-adjust: none;
-    border-radius: 4px;
-    color: #fff;
-    display: inline-block;
-    overflow: hidden;
-    text-decoration: none;
-}
+        .button {
+            -webkit-text-size-adjust: none;
+            border-radius: 4px;
+            color: #fff;
+            display: inline-block;
+            overflow: hidden;
+            text-decoration: none;
+        }
 
-.button-blue,
-.button-primary {
-    background-color: #2d3748;
-    border-bottom: 8px solid #2d3748;
-    border-left: 18px solid #2d3748;
-    border-right: 18px solid #2d3748;
-    border-top: 8px solid #2d3748;
-}
+        .button-blue,
+        .button-primary {
+            background-color: #2d3748;
+            border-bottom: 8px solid #2d3748;
+            border-left: 18px solid #2d3748;
+            border-right: 18px solid #2d3748;
+            border-top: 8px solid #2d3748;
+        }
 
-.button-green,
-.button-success {
-    background-color: #48bb78;
-    border-bottom: 8px solid #48bb78;
-    border-left: 18px solid #48bb78;
-    border-right: 18px solid #48bb78;
-    border-top: 8px solid #48bb78;
-}
+        .button-green,
+        .button-success {
+            background-color: #48bb78;
+            border-bottom: 8px solid #48bb78;
+            border-left: 18px solid #48bb78;
+            border-right: 18px solid #48bb78;
+            border-top: 8px solid #48bb78;
+        }
 
-.button-red,
-.button-error {
-    background-color: #e53e3e;
-    border-bottom: 8px solid #e53e3e;
-    border-left: 18px solid #e53e3e;
-    border-right: 18px solid #e53e3e;
-    border-top: 8px solid #e53e3e;
-}
+        .button-red,
+        .button-error {
+            background-color: #e53e3e;
+            border-bottom: 8px solid #e53e3e;
+            border-left: 18px solid #e53e3e;
+            border-right: 18px solid #e53e3e;
+            border-top: 8px solid #e53e3e;
+        }
 
-/* Panels */
+        /* Panels */
 
-.panel {
-    border-left: #2d3748 solid 4px;
-    margin: 21px 0;
-}
+        .panel {
+            border-left: #2d3748 solid 4px;
+            margin: 21px 0;
+        }
 
-.panel-content {
-    background-color: #edf2f7;
-    color: #718096;
-    padding: 16px;
-}
+        .panel-content {
+            background-color: #edf2f7;
+            color: #718096;
+            padding: 16px;
+        }
 
-.panel-content p {
-    color: #718096;
-}
+        .panel-content p {
+            color: #718096;
+        }
 
-.panel-item {
-    padding: 0;
-}
+        .panel-item {
+            padding: 0;
+        }
 
-.panel-item p:last-of-type {
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
+        .panel-item p:last-of-type {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
 
-/* Utilities */
+        /* Utilities */
 
-.break-all {
-    word-break: break-all;
-}
+        .break-all {
+            word-break: break-all;
+        }
 
-.orders table,
-.orders th,
-.orders td {
-    border: 1px solid #e8e5ef;
-    border-collapse: collapse;
-    padding: 8px;
-    text-align: left;
-}
-
-
+        .orders table,
+        .orders th,
+        .orders td {
+            border: 1px solid #e8e5ef;
+            border-collapse: collapse;
+            padding: 8px;
+            text-align: left;
+        }
     </style>
 </head>
+
 <body>
     <div class="wrapper">
         <div class="content">
             <div class="header">
-                <img src="{{ asset('images/PRP-logo-Positive-120x40px.svg') }}" alt="Press Ready Paper Logo" style="height: 5rem;">
+                <img src="{{ asset('images/PRP-logo-Positive-120x40px.svg') }}" alt="Press Ready Paper Logo"
+                    style="height: 5rem;">
             </div>
 
             <!-- Email Body -->
@@ -322,7 +322,9 @@ img {
                 <div class="inner-body">
                     <div class="content-cell">
                         <p><span class="label">Order No:</span> <span class="value">{{ $order->order_no }}</span></p>
-                        <p><span class="label">Order Date:</span> <span class="value">{{ $order->order_date->format('d/m/Y') }} (like it by: {{ $order->would_like_it_by }})</span></p>
+                        <p><span class="label">Order Date:</span> <span
+                                class="value">{{ $order->order_date->format('d/m/Y') }} (like it by:
+                                {{ $order->would_like_it_by }})</span></p>
                         <p>
                             OmiDesign<br>
                             omi omi<br>
@@ -330,7 +332,8 @@ img {
                             Berwick VIC 3806<br>
                             Australia
                         </p>
-                        <p><span class="label">Email:</span> <span class="value"><a href="mailto:omi@design.com">omi@design.com</a></span></p>
+                        <p><span class="label">Email:</span> <span class="value"><a
+                                    href="mailto:omi@design.com">omi@design.com</a></span></p>
                         <p><span class="label">Order Details:</span></p>
                         <table class="orders">
                             <thead>
@@ -363,8 +366,10 @@ img {
                             </tbody>
                         </table>
 
-                        <p><span class="label">Purchase Order No:</span> <span class="value">{{ $order->purchase_order_no }}</span></p>
-                        <p><span class="label">Additional Order Notes:</span> <span class="value">{{ $order->additional_instructions }}</span></p>
+                        <p><span class="label">Purchase Order No:</span> <span
+                                class="value">{{ $order->purchase_order_no }}</span></p>
+                        <p><span class="label">Additional Order Notes:</span> <span
+                                class="value">{{ $order->additional_instructions }}</span></p>
                     </div>
                 </div>
             </div>
@@ -373,4 +378,5 @@ img {
         </div>
     </div>
 </body>
+
 </html>

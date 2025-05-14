@@ -14,47 +14,47 @@ class CreateMYOBInvioce
 {
     public function handle(OrderCreated $event)
     {
-        $order = $event->order;
+        // $order = $event->order;
 
-        Invoice::create([
-            'order_id' => $order->id,
-            'amount' => $order->grand_total,
-            'status' => 'pending',
-        ]);
+        // Invoice::create([
+        //     'order_id' => $order->id,
+        //     'amount' => $order->grand_total,
+        //     'status' => 'pending',
+        // ]);
 
-        try {
-            $client = new Client;
+        // try {
+        //     $client = new Client;
 
-            $invoiceData = new NewItemInvoice([
-                'Number' => $order->id,
-                'Date' => now()->toISOString(),
-                'Customer' => [
-                    'UID' => $order->customer->customer_code,
-                ],
-                'ShipToAddress' => $order->customer->full_address,
-                'Lines' => $order->items->map(function ($item) {
-                    return [
-                        'Type' => 'Transaction',
-                        // 'Description' => $item->description,
-                        'BillQuantity' => $item->quantity,
-                        'UnitPrice' => $item->productItem->price_per_quantity,
-                        'Total' => $item->total,
-                        'Item' => [
-                            'UID' => $item->product_id,
-                        ],
-                    ];
-                })->toArray(),
-                'TotalAmount' => $order->grand_total,
-                'BillDeliveryStatus' => 'Print',
-                'Status' => 'Open',
-            ]);
+        //     $invoiceData = new NewItemInvoice([
+        //         'Number' => $order->id,
+        //         'Date' => now()->toISOString(),
+        //         'Customer' => [
+        //             'UID' => $order->customer->customer_code,
+        //         ],
+        //         'ShipToAddress' => $order->customer->full_address,
+        //         'Lines' => $order->items->map(function ($item) {
+        //             return [
+        //                 'Type' => 'Transaction',
+        //                 // 'Description' => $item->description,
+        //                 'BillQuantity' => $item->quantity,
+        //                 'UnitPrice' => $item->productItem->price_per_quantity,
+        //                 'Total' => $item->total,
+        //                 'Item' => [
+        //                     'UID' => $item->product_id,
+        //                 ],
+        //             ];
+        //         })->toArray(),
+        //         'TotalAmount' => $order->grand_total,
+        //         'BillDeliveryStatus' => 'Print',
+        //         'Status' => 'Open',
+        //     ]);
 
-            // Use CreateNewItemInvoice to send the invoice to MYOB
-            $createInvoiceService = new CreateNewItemInvoice($client);
-            $createInvoiceService->handle($invoiceData);
-        } catch (Exception $e) {
-            // Log the exception or handle it as needed
-            Log::error('Failed to create MYOB invoice: '.$e->getMessage());
-        }
+        //     // Use CreateNewItemInvoice to send the invoice to MYOB
+        //     $createInvoiceService = new CreateNewItemInvoice($client);
+        //     $createInvoiceService->handle($invoiceData);
+        // } catch (Exception $e) {
+        //     // Log the exception or handle it as needed
+        //     Log::error('Failed to create MYOB invoice: '.$e->getMessage());
+        // }
     }
 }

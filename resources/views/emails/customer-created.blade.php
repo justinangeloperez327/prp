@@ -96,14 +96,13 @@
             -premailer-cellspacing: 0;
             -premailer-width: 100%;
             margin: 0;
-            padding: 0;
+            padding: 4rem;
             width: 100%;
         }
 
         /* Header */
 
         .header {
-            padding: 25px 0;
             text-align: center;
         }
 
